@@ -1,87 +1,69 @@
+/* Styl dla całego dokumentu */
 body {
-			background: url('images/tlo.png') no-repeat center center/cover;
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f4f4f4;
-        }
-        .container {
-            width: 90%; /* Poszerzone okno tekstu */
-            margin: auto;
-            overflow: hidden;
-        }
-        header {
-            color: #fff;
-            padding-top: 30px;
-            min-height: 70px;
-            border-bottom: #77aaff 3px solid;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-        }
-       
-        header nav {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-        header nav a {
-            color: #fff;
-            text-decoration: none;
-            margin: 0 10px;
-            padding: 5px 10px;
-            background-color: rgba(0, 0, 0, 0.7);
-            border-radius: 5px;
-            transition: background-color 0.3s ease;
-        }
-        header nav a:hover {
-            background-color: rgba(119, 170, 255, 0.5);
-        }
-        .content {
-            padding: 20px;
-            background: #fff;
-            margin-top: 10px;
-        }
-        .content h2 {
-            color: #333;
-        }
-        .content p {
-            line-height: 1.6;
-        }
-        .content img {
-            max-width: 100%;
-            height: auto;
-            display: block;
-            margin: 10px auto;
-        }
-        .content .caption {
-            text-align: center;
-            font-style: italic;
-            color: #666;
-            margin-top: -10px;
-        }
-        .navigation-buttons {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 20px;
-        }
-        .navigation-buttons a {
-            background-color: #77aaff;
-            color: #fff;
-            text-decoration: none;
-            padding: 10px 20px;
-            border-radius: 5px;
-            transition: background-color 0.3s ease;
-        }
-        .navigation-buttons a:hover {
-            background-color: #5599dd;
-        }
-        footer {
-            background: #333;
-            color: #fff;
-            text-align: center;
-            padding: 10px 0;
-            margin-top: 20px;
-            clear: both;
-        }
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    /* Dodanie grafiki tła */
+    background-image: url('images/tlo.png');
+    background-size: cover; /* Dopasowanie tła do wielkości okna */
+    background-position: center;
+    background-attachment: fixed; /* Tło zostaje na miejscu przy przewijaniu strony */
+}
+
+/* Pole na tekst w jednolitym kolorze na warstwie wyżej */
+.container {
+    width: 80%;
+    margin: auto;
+    background-color: rgba(255, 255, 255, 0.8); /* Półprzezroczysty biały kolor */
+    padding: 20px;
+    border-radius: 10px; /* Zaokrąglenie rogów pola */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Dodanie delikatnego cienia */
+    position: relative;
+    top: 50px;
+}
+
+/* Nagłówek i nawigacja */
+header {
+    background-color: rgba(76, 175, 80, 0.9); /* Półprzezroczysty zielony kolor */
+    color: white;
+    padding: 10px 0;
+    text-align: center;
+}
+
+/* Nawigacja */
+nav a {
+    margin: 0 15px;
+    color: white;
+    text-decoration: none;
+}
+
+.formatted-text {
+    font-size: 18px;
+    line-height: 1.6;
+}
+
+/* Obraz w tle wypełnia całe pole */
+img {
+    max-width: 100%;
+    height: auto;
+}
+
+.profile-img {
+    float: left; /* Obrazek pływa z lewej strony tekstu */
+    margin: 0 15px 15px 0; /* Margines wokół obrazka */
+    width: 245px; /* Szerokość obrazka */
+    height: auto; /* Automatyczne dostosowanie wysokości */
+    border-radius: 10px; /* Zaokrąglenie rogów obrazka */
+}
+
+.profile-img2 {
+    float: right;/* Obrazek pływa z lewej strony tekstu */
+    margin: 0 15px 15px 0; /* Margines wokół obrazka */
+    width: 245px; /* Szerokość obrazka */
+    height: auto; /* Automatyczne dostosowanie wysokości */
+    border-radius: 10px; /* Zaokrąglenie rogów obrazka */
+}
+
+.centered {
+    text-align: center;
+}
