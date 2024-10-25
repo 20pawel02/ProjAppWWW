@@ -1,4 +1,3 @@
-/* Style ogólne */
 body {
     font-family: Arial, sans-serif;
     background-image: url('images/tlo.jpeg');
@@ -10,12 +9,39 @@ body {
     background-attachment: fixed;
 }
 
-/* Nagłówek i menu */
+div {
+    margin: 200px 0;
+    padding: 10px;
+}
+
+.font-small {
+    font-size: 12px;
+}
+
+.font-medium {
+    font-size: 18px;
+}
+
+.font-large {
+    font-size: 20px;
+}
+
 header {
     background-color: #333;
     color: white;
     text-align: center;
     padding: 20px;
+}
+
+h2.center{
+    text-align: center;
+}
+
+h3.left{
+  text-align: left;
+}
+style.text-indent{
+    text-indent: 60px;
 }
 
 nav ul {
@@ -43,15 +69,14 @@ nav ul li a:hover {
 .container {
     width: 80%;
     margin: auto;
-    background-color: rgba(255, 255, 255, 0.8); /* Półprzezroczysty biały kolor */
+    background-color: rgba(255, 255, 255, 0.8);
     padding: 20px;
-    border-radius: 10px; /* Zaokrąglenie rogów pola */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Dodanie delikatnego cienia */
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     position: relative;
     top: 50px;
 }
 
-/* Obrazki */
 img.float-left {
     float: left;
     margin: 0 15px 10px 0;
@@ -59,7 +84,34 @@ img.float-left {
     height: auto;
 }
 
-/* Tabela */
+img.float-right {
+    float: right;
+    margin: 0 15px 10px 0;
+    width: 300px;
+    height: auto;
+}
+
+.scaled-image-small{
+    max-width: 200px;
+    height: auto;
+    display: block;
+    margin: 0 auto;
+}
+
+.scaled-image-med{
+    max-width: 500px;
+    height: auto;
+    display: block;
+    margin: 0 auto;
+}
+
+.scaled-image-large{
+    max-width: 1000px;
+    height: auto;
+    display: block;
+    margin: 0 auto;
+}
+
 table {
     width: 100%;
     margin-top: 20px;
@@ -70,15 +122,4 @@ td {
     border: 1px solid #ddd;
     padding: 15px;
     text-align: center;
-}
-
-/* Stopka */
-footer {
-    background-color: #333;
-    color: white;
-    text-align: center;
-    padding: 10px;
-    position: fixed;
-    width: 100%;
-    bottom: 0;
 }
