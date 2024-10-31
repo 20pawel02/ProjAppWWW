@@ -25,14 +25,17 @@
 <main>
     <div class="container">
         <h2>Skontaktuj się z nami</h2>
-        <form action="mailto:example@domain.com" method="POST" enctype="text/plain">
-            <label for="name">Imię:</label>
+        <form action="mailto:example@example.com" method="post" enctype="text/plain">
+            <label for="name">Imię:</label><br>
             <input type="text" id="name" name="name" required><br><br>
-            <label for="email">Email:</label>
+
+            <label for="email">E-mail:</label><br>
             <input type="email" id="email" name="email" required><br><br>
+
             <label for="message">Wiadomość:</label><br>
-            <textarea id="message" name="message" rows="5" required></textarea><br><br>
-            <input type="submit" value="Wyślij">
+            <textarea id="message" name="message" rows="4" required></textarea><br><br>
+
+            <button type="submit">Wyślij wiadomość</button>
         </form>
     </div>
 </main>

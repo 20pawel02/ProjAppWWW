@@ -4,10 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Strona poświęcona lotom w kosmos">
-    <title>Loty w Kosmos</title>
-    <link rel="stylesheet" href="style.css">
+    <title>Poligon</title>
+    <link rel="stylesheet" href="style2.css">
+    <script src="kolorujtlo.js" type="text/javascript"></script>
+    <script src="timedate.js" type="text/javascript"></script>
 </head>
-<body>
+<body onload="startclock()">
+
+<div id="zegarek"></div>
+<div id="data"></div>
 
 <header>
     <h1>Loty w Kosmos</h1>
@@ -22,6 +27,17 @@
         </ul>
     </nav>
 </header>
+
+<FORM method="post" name="background">
+    <input type="button" value="żółty" onclick="changeBackground('#FFF000')">
+    <input type="button" value="czarny" onclick="changeBackground('#000000')">
+    <input type="button" value="biały" onclick="changeBackground('#ffffff')">
+    <input type="button" value="zielony" onclick="changeBackground('#00ff00')">
+    <input type="button" value="niebieski" onclick="changeBackground('#0000ff')">
+    <input type="button" value="pomarańczowy" onclick="changeBackground('#ff8000')">
+    <input type="button" value="szary" onclick="changeBackground('#c0c0c0')">
+    <input type="button" value="czerwony" onclick="changeBackground('#ff0000')">
+</FORM>
 
 <main>
     <div class="container">
