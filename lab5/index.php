@@ -5,73 +5,62 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Strona poświęcona lotom w kosmos">
     <title>Loty w Kosmos</title>
-
-    <?php
-    // Ładowanie odpowiednich arkuszy stylów
-    if ($_GET['idp'] == 'podstrona5') {
-        echo '<link rel="stylesheet" href="css/style2.css" />'; // Załaduj style2.css dla lab2
-    } else {
-        echo '<link rel="stylesheet" href="css/style.css" />'; // Domyślnie ładuj style.css
-    }
-    ?>
-
-    <link rel="stylesheet" href="../css/style.css">
-    <script src="js/jquery-3.7.1.min.js"></script>
+    <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
 
 <?php
-error_reporting(E_ALL ^ E_NOTICE ^ E_WARNING);
-
-if ($_GET['idp'] == '') {
-    $strona = '/html/index.html';
-} elseif ($_GET['idp'] == 'podstrona1') {
-    $strona = '/html/historia.html';
-} elseif ($_GET['idp'] == 'podstrona2') {
-    $strona = '/html/misje.html';
-} elseif ($_GET['idp'] == 'podstrona3') {
-    $strona = '/html/zwierzeta.html';
-} elseif ($_GET['idp'] == 'podstrona4') {
-    $strona = '/html/kontakt.html';
-} elseif ($_GET['idp'] == 'podstrona5') {
-    $strona = '/html/poligon.html';
+if ($_GET['idp'] == 'glowna') {
+    $strona = 'html/glowna.html';
+} elseif ($_GET['idp'] == 'historia') {
+    $strona = 'html/historia.html';
+} elseif ($_GET['idp'] == 'misje') {
+    $strona = 'html/misje.html';
+} elseif ($_GET['idp'] == 'zwierzeta') {
+    $strona = 'html/zwierzeta.html';
+} elseif ($_GET['idp'] == 'kontakt') {
+    $strona = 'html/kontakt.html';
 } elseif ($_GET['idp'] == 'filmy') {
-    $strona = '/html/filmy.html';
+    $strona = 'html/filmy.html';
+} elseif ($_GET['idp'] == 'poligon') {
+    $strona = 'html/poligon.html';
 } else {
-    $strona = '/html/404.html';
+    $strona = 'html/404.html';  // Plik z informacją o błędzie
 }
-
-/* Autor i informacje o projekcie */
-$nr_indeksu = '169394';
-$nrGrupy = '4';
-echo 'Autor: Paweł Wróbel ' . $nr_indeksu . ' grupa ' . $nrGrupy . '<br /><br />';
 ?>
 
 <header>
     <h1>Loty w Kosmos</h1>
     <nav>
         <ul>
-            <li><a href="index.html?idp">Strona Główna</a></li>
-            <li><a href="index.html?idp=podstrona1">Historia Lotów</a></li>
-            <li><a href="index.html?idp=podstrona2">Misje Kosmiczne</a></li>
-            <li><a href="index.html?idp=podstrona3">Zwierzęta w kosmosie</a></li>
-            <li><a href="index.html?idp=podstrona4">Kontakt</a></li>
-            <li><a href="index.html?idp=podstrona5">poligon</a></li>
-            <li><a href="index.html?idp=filmy">Filmy</a></li>
+            <li><a href="index.php?idp=glowna">Strona Główna</a></li>
+            <li><a href="index.php?idp=historia">Historia Lotów</a></li>
+            <li><a href="index.php?idp=misje">Misje Kosmiczne</a></li>
+            <li><a href="index.php?idp=zwierzeta">Zwierzęta w kosmosie</a></li>
+            <li><a href="index.php?idp=filmy">Filmy</a></li>
+            <li><a href="index.php?idp=kontakt">Kontakt</a></li>
+            <li><a href="index.php?idp=poligon">poligon</a></li>
         </ul>
     </nav>
 </header>
 
-<main>
-    <div class="container">
-        <?php
-        if (file_exists($strona)) {
-            include($strona);
-        } else {
-            echo "Strona nie istnieje.";
-        }
-        ?>
-    </div>
-</main>
+<div class="content">
+    <?php
+    if (file_exists($strona)) {
+        include($strona);
+    } else {
+        echo 'Zabłądziłeś w lesie, zalecamy wracanie się po swoich śladach.';
+    }
+    ?>
+</div>
+<div class="container">
+<?php
+error_reporting(E_ALL ^ E_NOTICE ^ E_WARNING);
+
+$nr_indeksu = '169394';
+$nrGrupy = '4';
+echo 'Autor: Paweł Wróbel ' . $nr_indeksu . ' grupa ' . $nrGrupy . ' <br /><br />';
+?>
+</div>
 </body>
 </html>

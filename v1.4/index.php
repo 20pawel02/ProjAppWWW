@@ -23,7 +23,6 @@
             <li><a href="historia.html">Historia Lotów</a></li>
             <li><a href="misje.html">Misje Kosmiczne</a></li>
             <li><a href="zwierzeta.html">Zwierzęta w kosmosie</a></li>
-            <li><a href="filmy.html">Filmy</a></li>
             <li><a href="kontakt.html">Kontakt</a></li>
             <li><a href="poligon.html">poligon</a></li>
         </ul>
@@ -83,5 +82,13 @@
         </p>
     </div>
 </main>
+
+
+<?php
+$nr_indeksu = '169394';
+$nrGrupy = 'X';
+echo 'Autor: Paweł Wróbel ' . $nr_indeksu . ' grupa ' . $nrGrupy . '<br /><br />';
+?>
+
 </body>
 </html>
