@@ -1,22 +1,22 @@
 <?php
-include 'cfg.php'
+include 'cfg.php';
 
- function FormularzLogowania() {
-     return '
-     <div class="logowanie">
-         <h3 class="heading">Panel CMS:</h3>
-         <form method="post" name="LoginForm" enctype="multipart/form-data" action="' . $_SERVER['REQUEST_URI'] . '">
-             <table class="logowanie">
-                 <tr><td class="log4_t">[login]</td><td><input type="text" name="login" class="logowanie" required /></td></tr>
-                 <tr><td class="log4_t">[haslo]</td><td><input type="password" name="login_pass" class="logowanie" required /></td></tr>
-                 <tr><td></td><td><input type="submit" name="x1_submit" class="logowanie" value="zaloguj" /></td></tr>
-             </table>
-         </form>
-     </div>';
- }
+function FormularzLogowania() {
+    return '
+    <div class="logowanie">
+        <h3 class="heading">Panel CMS:</h3>
+        <form method="post" name="LoginForm" enctype="multipart/form-data" action="' . $_SERVER['REQUEST_URI'] . '">
+            <table class="logowanie">
+                <tr><td class="log4_t">[login]</td><td><input type="text" name="login" class="logowanie" required /></td></tr>
+                <tr><td class="log4_t">[haslo]</td><td><input type="password" name="login_pass" class="logowanie" required /></td></tr>
+                <tr><td></td><td><input type="submit" name="x1_submit" class="logowanie" value="zaloguj" /></td></tr>
+            </table>
+        </form>
+    </div>';
+}
 
 // Sprawdzenie połączenia
-if ($con9n->connect_error) {
+if ($conn->connect_error) {
     die("Błąd połączenia z bazą danych: " . $conn->connect_error);
 }
 
@@ -32,7 +32,7 @@ function ListaPodstron($conn) {
                 <th>Tytuł Podstrony</th>
                 <th>Akcje</th>
               </tr>";
-        
+
         while ($row = $result->fetch_assoc()) {
             $id = $row['id'];
             $title = htmlspecialchars($row['page_title']); // Bezpieczne wyświetlanie tytułu
@@ -57,14 +57,14 @@ function EdytujPodstrone($conn) {
     // Sprawdzenie, czy przekazano id podstrony
     if (isset($_GET['id'])) {
         $id = $_GET['id'];
-        
+
         // Pobranie danych podstrony z bazy
         $sql = "SELECT page_title, page_content, status FROM page_list WHERE id = ?";
         $stmt = $conn->prepare($sql);
         $stmt->bind_param('i', $id); // Wiązanie parametru (id)
         $stmt->execute();
         $result = $stmt->get_result();
-        
+
         if ($result->num_rows > 0) {
             $row = $result->fetch_assoc();
             $title = $row['page_title'];
@@ -80,16 +80,16 @@ function EdytujPodstrone($conn) {
         echo "<form method='POST' action=''>
                 <label for='title'>Tytuł Podstrony:</label><br>
                 <input type='text' id='title' name='title' value='" . htmlspecialchars($title) . "' required><br><br>
-                
+
                 <label for='content'>Treść Podstrony:</label><br>
                 <textarea id='content' name='content' rows='4' cols='50' required>{$content}</textarea><br><br>
-                
+
                 <label for='status'>Aktywna:</label>
                 <input type='checkbox' id='status' name='status' value='1' " . ($status == 1 ? 'checked' : '') . "><br><br>
-                
+
                 <input type='submit' value='Zapisz zmiany'>
               </form>";
-        
+
         // Obsługa wysyłania formularza
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $new_title = $_POST['title'];
@@ -136,13 +136,13 @@ function DodajNowaPodstrone($conn) {
     echo "<form method='POST' action=''>
             <label for='title'>Tytuł Podstrony:</label><br>
             <input type='text' id='title' name='title' required><br><br>
-            
+
             <label for='content'>Treść Podstrony:</label><br>
             <textarea id='content' name='content' rows='4' cols='50' required></textarea><br><br>
-            
+
             <label for='status'>Aktywna:</label>
             <input type='checkbox' id='status' name='status' value='1'><br><br>
-            
+
             <input type='submit' value='Dodaj Podstronę'>
           </form>";
 }
@@ -168,4 +168,5 @@ function UsunPodstrone($conn, $id) {
         echo "<p>Wystąpił błąd podczas usuwania podstrony.</p>";
     }
 }
+
 ?>
