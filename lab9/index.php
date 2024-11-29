@@ -7,16 +7,22 @@
     <title>Loty w Kosmos</title>
     <link rel="stylesheet" href="css/style.css">
 
+// -----------------------------------------------------------------------------
+// includowanie plikow konfiguracyjnych
+// -----------------------------------------------------------------------------
     <?php 
         include('cfg.php'); 
         include('admin/admin.php'); 
         include('php/contact.php'); 
     ?>
-
 </head>
 <body>
 
 <?php
+// -----------------------------------------------------------------------------
+// Sprawdzanie wartości zmiennej $_GET['idp'] i przypisanie odpowiedniej strony
+// -----------------------------------------------------------------------------
+
 if ($_GET['idp'] == 'glowna') {
     $strona = 'html/glowna.html';
 } elseif ($_GET['idp'] == 'historia') {
@@ -36,6 +42,11 @@ if ($_GET['idp'] == 'glowna') {
 }
 ?>
 
+
+// -----------------------------------------------------------------------------
+// Panel nawigacyjny po headerze strony, przejecia pomiedzy podstronami
+// -----------------------------------------------------------------------------
+
 <header>
     <h1>Loty w Kosmos</h1>
     <nav>
@@ -52,6 +63,8 @@ if ($_GET['idp'] == 'glowna') {
 </header>
 
 <div class="content">
+// Sprawdzanie, czy plik istnieje, i jeśli tak, włączenie go
+
     <?php
     if (file_exists($strona)) {
         include($strona);
@@ -60,15 +73,15 @@ if ($_GET['idp'] == 'glowna') {
     }
     ?>
 </div>
+
 <div class="container">
 <?php
-error_reporting(E_ALL ^ E_NOTICE ^ E_WARNING);
+error_reporting(E_ALL ^ E_NOTICE ^ E_WARNING); // Ustawianie raportowania błędów
 
 $nr_indeksu = '169394';
 $nrGrupy = '4';
 echo 'Autor: Paweł Wróbel ' . $nr_indeksu . ' grupa ' . $nrGrupy . ' <br /><br />';
 ?>
 </div>
-
 </body>
 </html>

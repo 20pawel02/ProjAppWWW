@@ -1,3 +1,4 @@
+// Zmienne do przechowywania stanu
 var computed = false;
 var decimal = 0;
 

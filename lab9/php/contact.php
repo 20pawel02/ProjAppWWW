@@ -1,8 +1,8 @@
 <?php
-
 class Contact {
     // Method to display the contact form
-    function PokazKontakt() {
+
+    function PokazKontakt() { // Zwracanie kodu HTML dla formularza kontaktowego
         return '
         <div class="logowanie">
             <h3 class="heading">Panel CMS:</h3>
@@ -29,18 +29,20 @@ class Contact {
     }
     
 
-    // Method to send an email with the contact form data
+// Metoda do wysłania wiadomości e-mail z formularza kontaktowego
     function WyslijMailKontakt($odbiorca) {
-        if(empty($_POST['temat']) || empty($_POST['tresc']) || empty($_POST['email'])) {
+        if(empty($_POST['temat']) || empty($_POST['tresc']) || empty($_POST['email'])) { // Sprawdzenie, czy wszystkie pola formularza są wypełnione
             echo ['nie_wypelniles_pola'];
             echo $this->PokazKontakt(); // ponowne wypelnienie formularza
         }
         else {
+            // Przygotowanie danych wiadomości e-mail
             $mail['subject'] = $_POST['temat'];
             $mail['body'] = $_POST['tresc'];
             $mail['sender'] = $_POST['email'];
             $mail['recipient'] = $odbiorca; // czyli my jestesmy odbiorca, jezeli tworzymy formularz kontaktowy
 
+            // Ustawienia nagłówków wiadomości e-mail
             $header = "From: Formularz kontaktowy <".$mail['sender'].">\n";
             $header .= "MIME-Version: 1.0\nContent-Type: text/plain; charset=utf-8\nContent-Transfer-Encoding: 8bit\n";
             $header .= "X-Sender: ".$mail['sender'].">\n";
@@ -48,6 +50,7 @@ class Contact {
             $header .= "X-Priority: 3\n";
             $header .= "Return-Path: <".$mail['sender'].">\n";
 
+            // Wysłanie wiadomości e-mail
             mail($mail['recipient'], $mail['subject'], $mail['body'], $header);
             echo '[wiadomosc_wyslana]';
         }
@@ -55,8 +58,7 @@ class Contact {
     }
     // Method to display the password recovery form
     function PrzypomnijHaslo($odbiorca) {
-        // Check if the email field for password recovery is empty
-        if (empty($_POST['email_recov'])) {
+        if (empty($_POST['email_recov'])) { // Check if the email field for password recovery is empty
             echo $this->PokazKontaktHaslo(); // Display the email field for password recovery
         } else {
             // Prepare the email data for password recovery
@@ -80,7 +82,8 @@ class Contact {
 
     // Method to display the email field for password recovery
     function PokazKontaktHaslo() {
-        return '
+        // Zwracanie kodu HTML dla pola e-mail dla odzyskiwania hasła
+        return ' 
         <div class="form_passrecov">
             <form method="post" action="' . $_SERVER['REQUEST_URI'] . '">
                 <table class="form_passrecov">
