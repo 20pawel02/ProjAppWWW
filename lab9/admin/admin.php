@@ -1,6 +1,7 @@
 <?php
 include 'cfg.php';
 
+// Function to display the login form
 function FormularzLogowania() {
     return '
     <div class="logowanie">
@@ -15,12 +16,12 @@ function FormularzLogowania() {
     </div>';
 }
 
-// Sprawdzenie połączenia
+// Check database connection
 if ($conn->connect_error) {
     die("Błąd połączenia z bazą danych: " . $conn->connect_error);
 }
 
-// Funkcja wyświetlająca listę podstron
+// Function to display a list of subpages
 function ListaPodstron($conn) {
     $sql = "SELECT id, page_title FROM page_list";
     $result = $conn->query($sql);
@@ -35,7 +36,7 @@ function ListaPodstron($conn) {
 
         while ($row = $result->fetch_assoc()) {
             $id = $row['id'];
-            $title = htmlspecialchars($row['page_title']); // Bezpieczne wyświetlanie tytułu
+            $title = htmlspecialchars($row['page_title']); // Safe display of the title
             echo "<tr>
                     <td>{$id}</td>
                     <td>{$title}</td>
@@ -52,16 +53,16 @@ function ListaPodstron($conn) {
     }
 }
 
-// Funkcja pozwala na edytowanie podstron
+// Function to allow editing subpages
 function EdytujPodstrone($conn) {
-    // Sprawdzenie, czy przekazano id podstrony
+    // Check if the subpage ID is provided
     if (isset($_GET['id'])) {
         $id = $_GET['id'];
 
-        // Pobranie danych podstrony z bazy
+        // Retrieve subpage data from the database
         $sql = "SELECT page_title, page_content, status FROM page_list WHERE id = ?";
         $stmt = $conn->prepare($sql);
-        $stmt->bind_param('i', $id); // Wiązanie parametru (id)
+        $stmt->bind_param('i', $id); // Bind parameter (id)
         $stmt->execute();
         $result = $stmt->get_result();
 
@@ -75,7 +76,7 @@ function EdytujPodstrone($conn) {
             return;
         }
 
-        // Formularz edycji podstrony
+        // Edit subpage form
         echo "<h2>Edytuj Podstronę: {$title}</h2>";
         echo "<form method='POST' action=''>
                 <label for='title'>Tytuł Podstrony:</label><br>
@@ -90,16 +91,17 @@ function EdytujPodstrone($conn) {
                 <input type='submit' value='Zapisz zmiany'>
               </form>";
 
-        // Obsługa wysyłania formularza
+        // Handle form submission
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $new_title = $_POST['title'];
             $new_content = $_POST['content'];
-            $new_status = isset($_POST['status']) ? 1 : 0; // Jeżeli checkbox jest zaznaczony, status = 1, w przeciwnym razie = 0
+            $new_status = isset($_POST['status']) ? 1 : 0; // Checkbox: checked = 1, unchecked = 0
 
-            // Aktualizacja danych w bazie
+            // Update data in the database
             $update_sql = "UPDATE page_list SET page_title = ?, page_content = ?, status = ? WHERE id = ?";
             $update_stmt = $conn->prepare($update_sql);
             $update_stmt->bind_param('ssii', $new_title, $new_content, $new_status, $id);
+
             if ($update_stmt->execute()) {
                 echo "<p>Podstrona została zaktualizowana.</p>";
             } else {
@@ -112,14 +114,15 @@ function EdytujPodstrone($conn) {
     }
 }
 
+// Function to add a new subpage
 function DodajNowaPodstrone($conn) {
-    // Obsługa wysyłania formularza
+    // Handle form submission
     if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $new_title = $_POST['title'];
         $new_content = $_POST['content'];
-        $new_status = isset($_POST['status']) ? 1 : 0; // Checkbox: zaznaczony = 1, niezaznaczony = 0
+        $new_status = isset($_POST['status']) ? 1 : 0; // Checkbox: checked = 1, unchecked = 0
 
-        // Dodawanie danych do bazy
+        // Add data to the database
         $insert_sql = "INSERT INTO page_list (page_title, page_content, status) VALUES (?, ?, ?)";
         $insert_stmt = $conn->prepare($insert_sql);
         $insert_stmt->bind_param('ssi', $new_title, $new_content, $new_status);
@@ -131,7 +134,7 @@ function DodajNowaPodstrone($conn) {
         }
     }
 
-    // Formularz dodawania podstrony
+    // Add subpage form
     echo "<h2>Dodaj Nową Podstronę</h2>";
     echo "<form method='POST' action=''>
             <label for='title'>Tytuł Podstrony:</label><br>
@@ -147,13 +150,14 @@ function DodajNowaPodstrone($conn) {
           </form>";
 }
 
+// Function to delete a subpage
 function UsunPodstrone($conn, $id) {
     if (!is_numeric($id)) {
         echo "<p>Błąd: ID musi być liczbą.</p>";
         return;
     }
 
-    // Usunięcie rekordu z bazy danych
+    // Delete record from the database
     $delete_sql = "DELETE FROM page_list WHERE id = ? LIMIT 1";
     $delete_stmt = $conn->prepare($delete_sql);
     $delete_stmt->bind_param('i', $id);

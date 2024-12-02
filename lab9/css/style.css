@@ -1,3 +1,4 @@
+/* Global styles */
 body {
     font-family: Arial, sans-serif;
     background-image: url('../images/tlo.jpeg');
@@ -14,6 +15,7 @@ div {
     padding: 10px;
 }
 
+/* Font size classes */
 .font-small {
     font-size: 12px;
 }
@@ -26,10 +28,12 @@ div {
     font-size: 20px;
 }
 
-.center{
+/* Text alignment classes */
+.center {
     text-align: center;
 }
 
+/* Header styles */
 header {
     background-color: #333;
     color: white;
@@ -37,26 +41,28 @@ header {
     padding: 20px;
 }
 
-h2.center{
+h2.center {
     text-align: center;
 }
 
-h3.left{
-  text-align: left;
+h3.left {
+    text-align: left;
 }
 
-h3.right{
+h3.right {
     text-align: right;
 }
 
-h3.center{
+h3.center {
     text-align: center;
 }
 
-style.text-indent{
+/* Text indent class */
+.text-indent {
     text-indent: 60px;
 }
 
+/* Navigation styles */
 nav ul {
     list-style-type: none;
     padding: 0;
@@ -79,6 +85,7 @@ nav ul li a:hover {
     text-decoration: underline;
 }
 
+/* Container styles */
 .container {
     width: 80%;
     margin: auto;
@@ -90,6 +97,7 @@ nav ul li a:hover {
     top: 50px;
 }
 
+/* Image float classes */
 img.float-left {
     float: left;
     margin: 0 15px 10px 0;
@@ -104,34 +112,36 @@ img.float-right {
     height: auto;
 }
 
-.scaled-image-small{
+/* Scaled image classes */
+.scaled-image-small {
     max-width: 200px;
     height: auto;
     display: block;
     margin: 0 auto;
 }
 
-.scaled-image-small_med{
+.scaled-image-small_med {
     max-width: 230px;
     height: auto;
     display: block;
     margin: 0 auto;
 }
 
-.scaled-image-med{
+.scaled-image-med {
     max-width: 500px;
     height: auto;
     display: block;
     margin: 0 auto;
 }
 
-.scaled-image-large{
+.scaled-image-large {
     max-width: 1000px;
     height: auto;
     display: block;
     margin: 0 auto;
 }
 
+/* Table styles */
 table {
     width: 100%;
     margin-top: 20px;
