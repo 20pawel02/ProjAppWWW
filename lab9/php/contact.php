@@ -1,5 +1,5 @@
 <?php
-class Contact {
+    class Contact {
     // Method to display the contact form
 
     function PokazKontakt() { // Zwracanie kodu HTML dla formularza kontaktowego
@@ -29,9 +29,12 @@ class Contact {
     }
     
 
-// Metoda do wysłania wiadomości e-mail z formularza kontaktowego
+    // Metoda do wysłania wiadomości e-mail z formularza kontaktowego
     function WyslijMailKontakt($odbiorca) {
-        if(empty($_POST['temat']) || empty($_POST['tresc']) || empty($_POST['email'])) { // Sprawdzenie, czy wszystkie pola formularza są wypełnione
+        // Sprawdzenie, czy wszystkie pola formularza są wypełnione
+        if (empty($_POST['temat']) ||
+            empty($_POST['tresc']) || 
+            empty($_POST['email'])) { 
             echo ['nie_wypelniles_pola'];
             echo $this->PokazKontakt(); // ponowne wypelnienie formularza
         }
@@ -51,7 +54,9 @@ class Contact {
             $header .= "Return-Path: <".$mail['sender'].">\n";
 
             // Wysłanie wiadomości e-mail
-            mail($mail['recipient'], $mail['subject'], $mail['body'], $header);
+            mail($mail['recipient'], 
+                 $mail['subject'],  
+                 $mail['body'], $header);
             echo '[wiadomosc_wyslana]';
         }
     }
