@@ -1,0 +1,156 @@
+/* Global styles */
+body {
+    font-family: Arial, sans-serif;
+    background-image: url('../images/tlo.jpeg');
+    background-size: cover;
+    color: #000;
+    margin: 0;
+    padding: 0;
+    background-position: center;
+    background-attachment: fixed;
+}
+
+div {
+    margin: 200px 0;
+    padding: 10px;
+}
+
+/* Font size classes */
+.font-small {
+    font-size: 12px;
+}
+
+.font-medium {
+    font-size: 18px;
+}
+
+.font-large {
+    font-size: 20px;
+}
+
+/* Text alignment classes */
+.center {
+    text-align: center;
+}
+
+/* Header styles */
+header {
+    background-color: #333;
+    color: white;
+    text-align: center;
+    padding: 20px;
+    /* tutaj wpisac cos zeby na sztywno ustawic wysokosc tla w navbarze*/
+}
+
+h2.center {
+    text-align: center;
+}
+
+h3.left {
+    text-align: left;
+}
+
+h3.right {
+    text-align: right;
+}
+
+h3.center {
+    text-align: center;
+}
+
+/* Text indent class */
+.text-indent {
+    text-indent: 60px;
+}
+
+/* Navigation styles */
+nav ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    justify-content: center;
+}
+
+nav ul li {
+    margin: 0 15px;
+}
+
+nav ul li a {
+    color: white;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+nav ul li a:hover {
+    text-decoration: underline;
+}
+
+/* Container styles */
+.container {
+    width: 80%;
+    margin: auto;
+    background-color: rgba(255, 255, 255, 0.8);
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    position: relative;
+    top: 50px;
+}
+
+/* Image float classes */
+img.float-left {
+    float: left;
+    margin: 0 15px 10px 0;
+    width: 300px;
+    height: auto;
+}
+
+img.float-right {
+    float: right;
+    margin: 0 15px 10px 0;
+    width: 300px;
+    height: auto;
+}
+
+/* Scaled image classes */
+.scaled-image-small {
+    max-width: 200px;
+    height: auto;
+    display: block;
+    margin: 0 auto;
+}
+
+.scaled-image-small_med {
+    max-width: 230px;
+    height: auto;
+    display: block;
+    margin: 0 auto;
+}
+
+.scaled-image-med {
+    max-width: 500px;
+    height: auto;
+    display: block;
+    margin: 0 auto;
+}
+
+.scaled-image-large {
+    max-width: 1000px;
+    height: auto;
+    display: block;
+    margin: 0 auto;
+}
+
+/* Table styles */
+table {
+    width: 100%;
+    margin-top: 20px;
+    border-collapse: collapse;
+}
+
+td {
+    border: 1px solid #ddd;
+    padding: 15px;
+    text-align: center;
+}
