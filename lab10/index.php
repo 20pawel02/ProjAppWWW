@@ -10,6 +10,7 @@
         <!-- includowanie plikow konfiguracyjnych -->
         <?php 
             session_start();
+            require_once('admin/admin.php');  
                 
             // Regeneracja ID sesji dla bezpieczeństwa
             if (isset($_SESSION['initialized'])) {
@@ -25,19 +26,9 @@
             
             // includowanie wymaganych plików
             include('cfg.php'); 
-            include('admin/admin.php'); 
             include('php/contact.php');
             include('showpage.php');
-            include('php/navbar.php');
-            
-            /*
-            // Zarządzanie stylami CSS
-            if ($_GET['id'] === 7) {
-                echo '<link rel="stylesheet" href="css/style2.css" />'; 
-            } else {
-                echo '<link rel="stylesheet" href="css/style.css" />'; 
-            }
-                */
+            include('php/navbar.php'); 
         ?>
     </head>
 
@@ -70,21 +61,21 @@
             switch ($alias) {
                 case -1:
                     if ($Admin === null){                        
-                        $Admin = new $Admin;
+                        $Admin = new Admin();
                     }
                     echo $Admin->LoginAdmin();
                     break;
 
                 case -2:
                     if ($Admin === null){                        
-                        $Admin = new $Admin;
+                        $Admin = new Admin();
                     }
                     $Admin->logoutAdmin();
                     break;
 
                 case -3:
                     if ($Admin === null){
-                        $Admin = new $Admin;
+                        $Admin = new Admin();
                     }
                     if(!isset($_SESSION['loggedin'])){
                         header('Location: ?idp=admin');
@@ -95,7 +86,7 @@
 
                 case -4:
                     if($Admin === null){
-                        $Admin = new $Admin;
+                        $Admin = new Admin();
                     }
                     if(!isset($_SESSION['loggedin'])){
                         header('Location: ?idp=admin');
@@ -106,7 +97,7 @@
                 
                 case -5:
                     if($Admin === null){
-                        $Admin = new $Admin;
+                        $Admin = new Admin();
                     }
                     if(!isset($_SESSION['loggedin'])){
                         header('Location: ?idp=admin');

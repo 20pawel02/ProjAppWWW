@@ -1,8 +1,6 @@
-<!-- Moduł do zarzadzania aplikacjami -->
-
+    <!-- Moduł do zarzadzania aplikacjami -->
 <?php
 include 'cfg.php'; // ladowanie pliku konfigyracyjnego
-
     class Admin{
 
         // Function to display the login form
@@ -12,9 +10,18 @@ include 'cfg.php'; // ladowanie pliku konfigyracyjnego
                 <h3 class="heading">Panel CMS:</h3>
                 <form method="post" name="LoginForm" enctype="multipart/form-data" action="' . $_SERVER['REQUEST_URI'] . '">
                     <table class="logowanie">
-                        <tr><td class="log4_t">[login]</td><td><input type="text" name="login" class="logowanie" required /></td></tr>
-                        <tr><td class="log4_t">[haslo]</td><td><input type="password" name="login_pass" class="logowanie" required /></td></tr>
-                        <tr><td></td><td><input type="submit" name="x1_submit" class="logowanie" value="zaloguj" /></td></tr>
+                        <tr>
+                            <td class="log4_t">Login:</td>
+                            <td><input type="text" name="login" class="logowanie" required /></td>
+                        </tr>
+                        <tr>
+                            <td class="log4_t">Hasło:</td>
+                            <td><input type="password" name="login_pass" class="logowanie" required /></td>
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td><input type="submit" name="x1_submit" class="logowanie" value="Zaloguj" /></td>
+                        </tr>
                     </table>
                 </form>
             </div>';
@@ -53,14 +60,27 @@ include 'cfg.php'; // ladowanie pliku konfigyracyjnego
             }
         }
 
+        // Function to handle admin logout
+        function logoutAdmin() {
+            // Destroy the session
+            session_start();
+            session_destroy();
+            
+            // Redirect to the main page
+            header("Location: index.php");
+            exit();
+        }
+
         // Funkcja do wyświetlania panelu administracyjnego
-        /*
-         * Wyświetla panel administracyjny
-         */
+        // Wyświetla panel administracyjny
+
         function LoginAdmin(){
             $status_login = $this->CheckLogin(); // Sprawdź dane logowania
 
             if ($status_login == 1) {
+                echo '<div style="text-align: right; max-width: 790px; margin: 0 auto; padding: 10px;">';
+                echo '<a href="?idp=-2" style="background-color: #333; color: white; padding: 8px 15px; text-decoration: none; border-radius: 4px;">Wyloguj</a>';
+                echo '</div>';
                 echo '<h3 class="h3-admin">Lista Stron</h3>';
                 echo $this->ListaPodstron(); // Wyświetl listę podstron
             } else {
