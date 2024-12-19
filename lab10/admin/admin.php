@@ -67,7 +67,7 @@ include 'cfg.php'; // ladowanie pliku konfigyracyjnego
             session_destroy();
             
             // Redirect to the main page
-            header("Location: index.php");
+            header("Location: index.php?idp=1");
             exit();
         }
 
@@ -101,12 +101,6 @@ include 'cfg.php'; // ladowanie pliku konfigyracyjnego
         }
 
 
-
-        /*/ Check database connection
-        if ($conn->connect_error) {
-            die("Błąd połączenia z bazą danych: " . $conn->connect_error);
-        }*/
-
         // Function to display a list of subpages
         function ListaPodstron() {
             global $conn; 
@@ -128,8 +122,8 @@ include 'cfg.php'; // ladowanie pliku konfigyracyjnego
                             <td>{$id}</td>
                             <td>{$title}</td>
                             <td>
-                                <a href='edit.php?id={$id}'>Edytuj</a> | 
-                                <a href='delete.php?id={$id}' onclick='return confirm(\"Czy na pewno chcesz usunąć tę podstronę?\")'>Usuń</a>
+                                <a href='../index.php?idp=-3&id={$id}'>Edytuj</a> | 
+                                <a href='../index.php?idp=-4&id={$id}' onclick='return confirm(\"Czy na pewno chcesz usunąć tę podstronę?\")'>Usuń</a>
                             </td>
                         </tr>";
                 }

@@ -81,6 +81,13 @@
                         header('Location: ?idp=admin');
                         exit();
                     }
+                    // Check if page ID is provided
+                    if (!isset($_GET['id'])) {
+                        echo "Nie podano ID strony do edycji.";
+                        break;
+                    }
+                    // Pass the page ID to the EditPage method
+                    $_GET['ide'] = intval($_GET['id']);
                     echo $Admin->EditPage();
                     break;
 
@@ -103,7 +110,7 @@
                         header('Location: ?idp=admin');
                         exit();
                     }
-                    echo $Admin->StworzPodstronen();
+                    echo $Admin->StworzPodstrone();
                     break;
 
                 case -6:
