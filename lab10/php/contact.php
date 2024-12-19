@@ -4,27 +4,33 @@
 
         function PokazKontakt() { // Zwracanie kodu HTML dla formularza kontaktowego
             return '
-            <div class="logowanie">
-                <h3 class="heading">Panel CMS:</h3>
-                <form method="post" name="LoginForm" enctype="multipart/form-data" action="' . $_SERVER['REQUEST_URI'] . '">
-                    <table class="logowanie">
-                        <tr><td class="log4_t">[login]</td><td><input type="text" name="login" class="logowanie" required /></td></tr>
-                        <tr><td class="log4_t">[haslo]</td><td><input type="password" name="login_pass" class="logowanie" required /></td></tr>
-                        <tr><td></td><td><input type="submit" name="x1_submit" class="logowanie" value="zaloguj" /></td></tr>
-                    </table>
-                </form>
-            </div>
-        
-            <div class="kontakt">
-                <h3 class="heading">Formularz Kontaktowy:</h3>
-                <form method="post" name="ContactForm" action="' . $_SERVER['REQUEST_URI'] . '">
-                    <table class="kontakt">
-                        <tr><td class="kontakt_t">[email]</td><td><input type="email" name="email" class="kontakt" required /></td></tr>
-                        <tr><td class="kontakt_t">[tytul]</td><td><input type="text" name="title" class="kontakt" required /></td></tr>
-                        <tr><td class="kontakt_t">[wiadomosc]</td><td><textarea name="message" class="kontakt" rows="4" cols="50" required></textarea></td></tr>
-                        <tr><td></td><td><input type="submit" name="x2_submit" class="kontakt" value="wyślij" /></td></tr>
-                    </table>
-                </form>
+            <div class="page-section-idp-6">
+                <h2>Skontaktuj się z nami</h2>
+                
+                <div class="content-block">
+                    <form method="post" name="ContactForm" action="' . $_SERVER['REQUEST_URI'] . '">
+                        <div class="form-group">
+                            <label for="email">Twój email</label>
+                            <input type="email" id="email" name="email" required />
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="title">Temat wiadomości</label>
+                            <input type="text" id="title" name="title" required />
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="message">Treść wiadomości</label>
+                            <textarea id="message" name="message" rows="4" required></textarea>
+                        </div>
+                        
+                        <input type="submit" class="submit-button" value="Wyślij wiadomość" />
+                    </form>
+                </div>
+                
+                <p class="info-text">
+                    Prosimy o podanie aktualnego adresu email, na który odeślemy odpowiedź.
+                </p>
             </div>';
         }
         

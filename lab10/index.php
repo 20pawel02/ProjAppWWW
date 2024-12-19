@@ -28,7 +28,7 @@
             include('cfg.php'); 
             include('php/contact.php');
             include('showpage.php');
-            include('php/navbar.php'); 
+            include('php/navbar.php');
         ?>
     </head>
 

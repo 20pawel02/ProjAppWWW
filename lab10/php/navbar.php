@@ -18,6 +18,7 @@
         // Sprawdzenie, czy użytkownik jest zalogowany
         if (isset($_SESSION['loggedin'])) {
             // Jeśli użytkownik jest zalogowany, dodaj linki do panelu administracyjnego
+            $navHtml .= '<li><a class="admin" href="?idp=-1">ADMIN</a></li>';
             $navHtml .= '<li><a class="logout" href="?idp=-2">WYLOGUJ</a></li>';
         }else{
             $navHtml .= '<li><a class="haslo" href="?idp=-6">ODZYSKIWANIE HASŁA</a></li>';

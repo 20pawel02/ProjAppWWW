@@ -12,6 +12,26 @@ function PokazStrone($alias) {
     global $conn;
     $alias_clear = htmlspecialchars($alias); // ochrona przed atakami typu XSS
 
+    // Specjalna obsługa dla panelu administracyjnego
+    if ($alias_clear == -1) {
+        // Sprawdzenie, czy użytkownik jest zalogowany
+        if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
+            return '[brak_dostepu]';
+        }
+        
+        // Zwróć treść panelu administracyjnego
+        return '
+        <div class="admin-panel">
+            <h2>Panel Administracyjny</h2>
+            <ul>
+                <li><a href="?action=manage_pages">Zarządzaj stronami</a></li>
+                <li><a href="?action=manage_users">Zarządzaj użytkownikami</a></li>
+                <li><a href="?action=site_settings">Ustawienia strony</a></li>
+            </ul>
+        </div>
+        ';
+    }
+
     $query = "SELECT * FROM page_list WHERE id = ? LIMIT 1";
     $stmt = $conn->prepare($query); // przygotowanie zapytania sql
     $stmt->bind_param("s", $alias_clear); // powiazanie parametru z zapytaniem
