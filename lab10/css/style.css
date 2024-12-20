@@ -308,55 +308,24 @@ table.admin tr:hover {
     background-color: rgba(240, 240, 240, 0.9);
 }
 
-/* Style for the table below Lista Podstron */
-.h3-admin + table {
-    background-color: rgba(255, 255, 255, 0.8);
-    max-width: 800px;
-    margin: 0 auto;
-    border-radius: 0 0 10px 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    border-collapse: collapse;
-    width: 100%;
-}
-
-.h3-admin + table th,
-.h3-admin + table td {
-    padding: 12px;
-    text-align: left;
-    border: 1px solid #ddd;
-}
-
-.h3-admin + table th {
-    background-color: rgba(240, 240, 240, 0.9);
-    font-weight: bold;
-}
-
-.h3-admin + table tr:nth-child(even) {
-    background-color: rgba(247, 247, 247, 0.8);
-}
-
-.h3-admin + table tr:hover {
-    background-color: rgba(240, 240, 240, 0.9);
-}
-
-.h3-admin + table a {
-    color: #333;
-    text-decoration: none;
-    margin: 0 5px;
-}
-
-.h3-admin + table a:hover {
-    text-decoration: underline;
-}
-
 /* Styles for Edit Page section */
 .edit-container {
     background-color: white;
     border: 1px solid #e0e0e0;
     border-radius: 5px;
-    padding: 20px;
-    margin: 20px 0;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    padding: 30px;
+    max-width: 600px;
+    width: 100%;
+    margin: 20px auto;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+}
+
+.edit-container .edit-title {
+    text-align: center;
+    color: #333;
+    margin-bottom: 25px;
+    border-bottom: 2px solid #007bff;
+    padding-bottom: 10px;
 }
 
 .edit-container .form-group {
@@ -365,127 +334,13 @@ table.admin tr:hover {
 
 .edit-container label {
     display: block;
-    margin-bottom: 5px;
-    font-weight: bold;
+    margin-bottom: 8px;
+    color: #555;
+    font-weight: 600;
 }
 
 .edit-container input[type="text"],
-.edit-container textarea,
-.edit-container select {
-    width: 100%;
-    padding: 8px;
-    border: 1px solid #ced4da;
-    border-radius: 4px;
-    background-color: white;
-}
-
-.edit-container input[type="submit"] {
-    background-color: white;
-    border: 1px solid #007bff;
-    color: #007bff;
-    padding: 10px 15px;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-}
-
-.edit-container input[type="submit"]:hover {
-    background-color: #007bff;
-    color: white;
-}
-
-/* Styles for page with idp=-3 and id=1 */
-.page-section-minus-3 {
-    background-color: white;
-    border: 1px solid #e0e0e0;
-    border-radius: 5px;
-    padding: 15px;
-    margin: 10px 0;
-}
-
-.page-section-minus-3 .page-options,
-.page-section-minus-3 .page-window,
-.page-section-minus-3 .page-buttons {
-    background-color: white;
-    border: 1px solid #e0e0e0;
-    border-radius: 5px;
-    padding: 15px;
-    margin: 10px 0;
-}
-
-.page-section-minus-3 .page-buttons input[type="submit"],
-.page-section-minus-3 .page-buttons button {
-    background-color: white;
-    border: 1px solid #007bff;
-    color: #007bff;
-    padding: 8px 15px;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-}
-
-.page-section-minus-3 .page-buttons input[type="submit"]:hover,
-.page-section-minus-3 .page-buttons button:hover {
-    background-color: #007bff;
-    color: white;
-}
-
-/* Additional styling for inputs and selects */
-.page-section-minus-3 .page-options input,
-.page-section-minus-3 .page-options select,
-.page-section-minus-3 .page-window input,
-.page-section-minus-3 .page-window select {
-    background-color: white;
-    border: 1px solid #ced4da;
-    border-radius: 4px;
-    padding: 8px;
-    margin: 5px 0;
-    width: 100%;
-}
-
-/* Styles for page with idp=6 */
-.page-section-idp-6 {
-    background-color: white;
-    border-radius: 8px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    padding: 30px;
-    max-width: 800px;
-    margin: 20px auto;
-}
-
-.page-section-idp-6 h2,
-.page-section-idp-6 h3 {
-    color: #333;
-    text-align: center;
-    margin-bottom: 25px;
-    border-bottom: 2px solid #007bff;
-    padding-bottom: 10px;
-}
-
-.page-section-idp-6 .content-block {
-    background-color: white;
-    border: 1px solid #e0e0e0;
-    border-radius: 5px;
-    padding: 20px;
-    margin-bottom: 20px;
-}
-
-.page-section-idp-6 .form-group {
-    margin-bottom: 15px;
-}
-
-.page-section-idp-6 label {
-    margin-bottom: 5px;
-    color: #555;
-    font-weight: 600;
-    display: block;
-}
-
-.page-section-idp-6 input[type="text"],
-.page-section-idp-6 input[type="email"],
-.page-section-idp-6 input[type="tel"],
-.page-section-idp-6 textarea,
-.page-section-idp-6 select {
+.edit-container textarea {
     width: 100%;
     padding: 10px;
     border: 1px solid #ced4da;
@@ -494,23 +349,19 @@ table.admin tr:hover {
     transition: border-color 0.3s ease;
 }
 
-.page-section-idp-6 input[type="text"]:focus,
-.page-section-idp-6 input[type="email"]:focus,
-.page-section-idp-6 input[type="tel"]:focus,
-.page-section-idp-6 textarea:focus,
-.page-section-idp-6 select:focus {
+.edit-container input[type="text"]:focus,
+.edit-container textarea:focus {
     outline: none;
     border-color: #007bff;
     box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
 }
 
-.page-section-idp-6 textarea {
+.edit-container textarea {
     resize: vertical;
-    min-height: 100px;
+    min-height: 150px;
 }
 
-.page-section-idp-6 .submit-button,
-.page-section-idp-6 input[type="submit"] {
+.edit-container .submit-button {
     background-color: #007bff;
     color: white;
     border: none;
@@ -519,20 +370,16 @@ table.admin tr:hover {
     cursor: pointer;
     transition: background-color 0.3s ease;
     display: block;
-    width: auto;
-    margin: 20px auto;
+    width: 100%;
+    margin-top: 15px;
 }
 
-.page-section-idp-6 .submit-button:hover,
-.page-section-idp-6 input[type="submit"]:hover {
+.edit-container .submit-button:hover {
     background-color: #0056b3;
 }
 
-.page-section-idp-6 .info-text {
-    text-align: center;
-    color: #666;
-    margin: 15px 0;
-    font-size: 0.9em;
+.edit-container input[type="checkbox"] {
+    margin-right: 8px;
 }
 
 /* -------------------------------------------------------- */
@@ -616,4 +463,78 @@ table.admin tr:hover {
     margin-top: 20px;
     color: #666;
     font-size: 0.9em;
+}
+
+/* -------------------------------------------------------- */
+/* ------------ Styles for Category Management ------------ */
+/* -------------------------------------------------------- */
+
+.category-management {
+    display: flex;
+    gap: 20px;
+    margin-top: 20px;
+}
+
+.category-list {
+    flex: 1;
+    background-color: white;
+    border: 1px solid #e0e0e0;
+    border-radius: 5px;
+    padding: 15px;
+}
+
+.category-tree {
+    list-style-type: none;
+    padding-left: 15px;
+}
+
+.category-tree li {
+    margin-bottom: 10px;
+    position: relative;
+}
+
+.category-tree li::before {
+    content: '▶';
+    color: #007bff;
+    margin-right: 10px;
+    font-size: 0.7em;
+    position: absolute;
+    left: -15px;
+    top: 3px;
+}
+
+.category-tree ul {
+    margin-left: 20px;
+    border-left: 1px solid #e0e0e0;
+    padding-left: 15px;
+}
+
+.category-forms {
+    flex: 2;
+}
+
+.add-category-form,
+.edit-category-form,
+.delete-category-form {
+    background-color: white;
+    border: 1px solid #e0e0e0;
+    border-radius: 5px;
+    padding: 15px;
+    margin-bottom: 15px;
+}
+
+.category-forms h4 {
+    border-bottom: 2px solid #007bff;
+    padding-bottom: 10px;
+    margin-bottom: 15px;
+    color: #333;
+}
+
+.alert-info {
+    background-color: #e7f3fe;
+    border: 1px solid #b6d4fe;
+    color: #0c5460;
+    padding: 10px;
+    margin-bottom: 15px;
+    border-radius: 4px;
 }
