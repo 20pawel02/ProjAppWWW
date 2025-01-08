@@ -5,7 +5,16 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <meta name="description" content="Strona poświęcona lotom w kosmos">
         <title>Loty w Kosmos</title>
-        <link rel="stylesheet" href="css/style.css">
+       
+        <!-- Sprawdzamy, czy jesteśmy na stronie poligon.html -->
+        <?php
+            $current_page = $_SERVER['REQUEST_URI'];
+            if (strpos($current_page, 'poligon.html') !== false) {
+                echo '<link rel="stylesheet" href="css/style2.css">';
+            } else {
+                echo '<link rel="stylesheet" href="css/style.css">';
+            }
+        ?>
 
         <!-- includowanie plikow konfiguracyjnych -->
         <?php 
@@ -29,6 +38,7 @@
             include('php/contact.php');
             include('showpage.php');
             include('php/navbar.php');
+            include('php/kategorie.php');
         ?>
     </head>
 
@@ -125,6 +135,26 @@
                     echo "<h2>Kontakt</h2>";
                     echo $contact->WyslijMailaKontakt("169394@student.uwm.edu.pl");
                     echo "<br></br>";
+                    break;
+
+                case -8:
+                    if ($Admin === null) {
+                        $Admin = new Admin();
+                    }
+                    if (!isset($_SESSION['loggedin'])) {
+                        header('Location: ?idp=admin');
+                        exit();
+                    }
+                    $kategorie = new Kategorie($conn);
+                    
+                    // Obsługa formularza dodawania kategorii
+                    if (isset($_POST['dodaj_kategorie'])) {
+                        $nazwa = $_POST['nazwa'];
+                        $matka = $_POST['matka'];
+                        $kategorie->DodajKategorie($nazwa, $matka);
+                    }
+                    
+                    echo $kategorie->ZarzadzajKategoriami();
                     break;
 
                 default:

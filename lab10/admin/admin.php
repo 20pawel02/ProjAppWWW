@@ -81,6 +81,13 @@ include 'cfg.php'; // ladowanie pliku konfigyracyjnego
                 echo '<div style="text-align: right; max-width: 790px; margin: 0 auto; padding: 10px;">';
                 echo '<a href="?idp=-2" style="background-color: #333; color: white; padding: 8px 15px; text-decoration: none; border-radius: 4px;">Wyloguj</a>';
                 echo '</div>';
+                
+                // Menu administracyjne
+                echo '<div class="admin-menu" style="max-width: 790px; margin: 20px auto; padding: 10px; background-color: #f5f5f5; border-radius: 4px;">';
+                echo '<a href="?idp=-5" style="margin-right: 15px;">Dodaj nową stronę</a>';
+                echo '<a href="?idp=-8" style="margin-right: 15px;">Zarządzaj kategoriami</a>';
+                echo '</div>';
+                
                 echo '<h3 class="h3-admin">Lista Stron</h3>';
                 echo $this->ListaPodstron(); // Wyświetl listę podstron
             } else {
@@ -140,8 +147,6 @@ include 'cfg.php'; // ladowanie pliku konfigyracyjnego
             $status_login = $this->CheckLogin();
 
             if ($status_login == 1) {
-                echo '<h3 class="h3-admin">Strona edycji</h3>';
-
                 // sprawdzenie czy w URL strony znajduje sie parametr ide który jest id edytowanej strony
                 if (isset($_GET['ide'])) {
 
