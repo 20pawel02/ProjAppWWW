@@ -1153,3 +1153,194 @@ table.admin tr:hover {
         width: 100%;
     }
 }
+
+/* --------------------------------------------------- */
+/* ------------------ Sklep styles ------------------- */
+/* --------------------------------------------------- */
+
+.sklep-kategorie {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.kategorie-lista {
+    list-style: none;
+    padding: 0;
+}
+
+.kategoria-item {
+    margin: 10px 0;
+}
+
+.kategoria-item a {
+    color: #333;
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.3s ease;
+}
+
+.kategoria-item a:hover {
+    color: #4a90e2;
+}
+
+.podkategorie-lista {
+    list-style: none;
+    padding-left: 20px;
+    margin-top: 5px;
+}
+
+.sklep-produkty {
+    margin-top: 30px;
+}
+
+.produkty-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
+    padding: 20px 0;
+}
+
+.produkt-karta {
+    background: white;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    transition: transform 0.3s ease;
+}
+
+.produkt-karta:hover {
+    transform: translateY(-5px);
+}
+
+.produkt-zdjecie {
+    width: 100%;
+    height: 200px;
+    overflow: hidden;
+}
+
+.produkt-zdjecie img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.produkt-info {
+    padding: 20px;
+}
+
+.produkt-info h3 {
+    margin: 0 0 10px;
+    color: #333;
+    font-size: 1.2em;
+}
+
+.produkt-opis {
+    color: #666;
+    font-size: 0.9em;
+    margin-bottom: 15px;
+    height: 60px;
+    overflow: hidden;
+}
+
+.produkt-detale {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.cena {
+    font-size: 1.2em;
+    font-weight: 600;
+    color: #4a90e2;
+}
+
+.cena small {
+    font-size: 0.7em;
+    color: #666;
+}
+
+.btn-koszyk {
+    width: 100%;
+    padding: 10px;
+    background: #4a90e2;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: background-color 0.3s ease;
+}
+
+.btn-koszyk:hover {
+    background: #357abd;
+}
+
+@media (max-width: 768px) {
+    .produkty-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .produkt-karta {
+        max-width: 100%;
+    }
+}
+
+.brak-produktow {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 20px;
+    background: white;
+    border-radius: 8px;
+    color: #666;
+}
+
+.sklep-kategorie {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.kategorie-lista {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.kategoria-item {
+    margin: 8px 0;
+}
+
+.kategoria-item a {
+    color: #333;
+    text-decoration: none;
+    font-weight: 500;
+    padding: 5px 0;
+    display: block;
+    transition: color 0.3s ease;
+}
+
+.kategoria-item a:hover {
+    color: #4a90e2;
+}
+
+.podkategorie-lista {
+    list-style: none;
+    padding-left: 20px;
+    margin: 5px 0;
+    border-left: 2px solid #eee;
+}
+
+.podkategorie-lista .kategoria-item {
+    margin: 5px 0;
+}
+
+.podkategorie-lista .kategoria-item a {
+    font-weight: normal;
+    font-size: 0.95em;
+}

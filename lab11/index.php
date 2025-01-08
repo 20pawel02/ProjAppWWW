@@ -169,6 +169,12 @@
                     echo $produkty->ZarzadzajProduktami();
                     break;
 
+                case -10:
+                    include('php/sklep.php');
+                    $sklep = new Sklep($conn);
+                    echo $sklep->PokazSklep();
+                    break;
+
                 default:
                     echo PokazStrone($alias);
                     break;
