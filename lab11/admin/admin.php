@@ -334,19 +334,29 @@ include 'cfg.php'; // ladowanie pliku konfigyracyjnego
             }
 
             // Add subpage form
-            echo "<h2>Dodaj Nową Podstronę</h2>";
-            echo "<form method='POST' action=''>
-                    <label for='title'>Tytuł Podstrony:</label><br>
-                    <input type='text' id='title' name='title' required><br><br>
+            $output = '<div class="form-container">
+                <h2>Tworzenie nowej podstrony</h2>
+                <form method="post" action="'.$_SERVER['REQUEST_URI'].'">
+                    <div class="form-group">
+                        <label for="title">Tytuł Podstrony:</label>
+                        <input type="text" id="title" name="title" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="content">Treść Podstrony:</label>
+                        <textarea id="content" name="content" rows="4" cols="50" required></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="status">Aktywna:</label>
+                        <input type="checkbox" id="status" name="status" value="1">
+                    </div>
+                    
+                    <input type="submit" value="Dodaj Podstronę">
+                </form>
+            </div>';
 
-                    <label for='content'>Treść Podstrony:</label><br>
-                    <textarea id='content' name='content' rows='4' cols='50' required></textarea><br><br>
-
-                    <label for='status'>Aktywna:</label>
-                    <input type='checkbox' id='status' name='status' value='1'><br><br>
-
-                    <input type='submit' value='Dodaj Podstronę'>
-                </form>";
+            return $output;
         }
 
         // Function to delete a subpage
