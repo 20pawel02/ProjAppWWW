@@ -71,24 +71,24 @@
             switch ($alias) {
                 case -1:
                     if ($Admin === null){                        
-                        $Admin = new Admin();
+                        $Admin = new Admin($conn);
                     }
                     echo $Admin->LoginAdmin();
                     break;
 
                 case -2:
                     if ($Admin === null){                        
-                        $Admin = new Admin();
+                        $Admin = new Admin($conn);
                     }
                     $Admin->logoutAdmin();
                     break;
 
                 case -3:
                     if ($Admin === null){
-                        $Admin = new Admin();
+                        $Admin = new Admin($conn);
                     }
                     if(!isset($_SESSION['loggedin'])){
-                        header('Location: ?idp=admin');
+                        header('Location: ?idp=-1');
                         exit();
                     }
                     // Check if page ID is provided
@@ -103,7 +103,7 @@
 
                 case -4:
                     if($Admin === null){
-                        $Admin = new Admin();
+                        $Admin = new Admin($conn);
                     }
                     if(!isset($_SESSION['loggedin'])){
                         header('Location: ?idp=admin');
@@ -114,7 +114,7 @@
                 
                 case -5:
                     if($Admin === null){
-                        $Admin = new Admin();
+                        $Admin = new Admin($conn);
                     }
                     if(!isset($_SESSION['loggedin'])){
                         header('Location: ?idp=admin');
@@ -125,7 +125,6 @@
 
                 case -6:
                     $contact = new Contact();
-                    echo "<h2>Odzyskanie hasła</h2>";
                     echo $contact->PrzypomnijHaslo("169394@student.uwm.edu.pl");
                     echo"<br></br>";
                     break;
@@ -139,7 +138,7 @@
 
                 case -8:
                     if ($Admin === null) {
-                        $Admin = new Admin();
+                        $Admin = new Admin($conn);
                     }
                     if (!isset($_SESSION['loggedin'])) {
                         header('Location: ?idp=admin');

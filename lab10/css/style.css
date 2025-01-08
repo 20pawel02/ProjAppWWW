@@ -784,3 +784,19 @@ table.admin tr:hover {
     background: #f5f5f5;
     border-radius: 5px;
 }
+
+.admin-link {
+    display: inline-block;
+    background-color: #333;
+    color: white;
+    padding: 10px 20px;
+    text-decoration: none;
+    border-radius: 4px;
+    margin: 10px 0;
+    transition: background-color 0.3s ease;
+}
+
+.admin-link:hover {
+    background-color: #555;
+    text-decoration: none;
+}

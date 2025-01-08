@@ -2,6 +2,11 @@
 <?php
 include 'cfg.php'; // ladowanie pliku konfigyracyjnego
     class Admin{
+        private $conn;
+
+        public function __construct($conn = null) {
+            $this->conn = $conn;
+        }
 
         // Function to display the login form
         function FormularzLogowania() {
@@ -166,7 +171,7 @@ include 'cfg.php'; // ladowanie pliku konfigyracyjnego
                         if ($GLOBALS['conn']->query($query) === TRUE) {
                             echo "Strona została zaktualizowana pomyślnie.";
                             // przekierowanie na panel admina
-                            header("Location: ?idp=admin");
+                            header("Location: ?idp=-1   ");
                             exit;
                         } else {
                             // komunikat o błedzie podczas aktualizacji
@@ -245,8 +250,7 @@ include 'cfg.php'; // ladowanie pliku konfigyracyjnego
                 }
 
                 // Sprawdzenie unikalności aliasu
-                global $conn;
-                $check_stmt = $conn->prepare("SELECT COUNT(*) as count FROM page_list WHERE page_alias = ?");
+                $check_stmt = $this->conn->prepare("SELECT COUNT(*) as count FROM page_list WHERE page_alias = ?");
                 $check_stmt->bind_param("s", $new_alias);
                 $check_stmt->execute();
                 $check_result = $check_stmt->get_result();
@@ -258,7 +262,7 @@ include 'cfg.php'; // ladowanie pliku konfigyracyjnego
                 }
 
                 // Przygotowanie zapytania SQL INSERT
-                $stmt = $conn->prepare("INSERT INTO page_list (page_title, page_content, status, page_alias) VALUES (?, ?, ?, ?)");
+                $stmt = $this->conn->prepare("INSERT INTO page_list (page_title, page_content, status, page_alias) VALUES (?, ?, ?, ?)");
                 $stmt->bind_param("ssss", $new_title, $new_content, $new_status, $new_alias);
 
                 // Wykonanie zapytania
@@ -318,7 +322,7 @@ include 'cfg.php'; // ladowanie pliku konfigyracyjnego
 
                 // Add data to the database
                 $insert_sql = "INSERT INTO page_list (page_title, page_content, status) VALUES (?, ?, ?)";
-                $insert_stmt = $conn->prepare($insert_sql);
+                $insert_stmt = $this->conn->prepare($insert_sql);
                 $insert_stmt->bind_param('ssi', $new_title, $new_content, $new_status);
 
                 if ($insert_stmt->execute()) {
@@ -345,32 +349,31 @@ include 'cfg.php'; // ladowanie pliku konfigyracyjnego
         }
 
         // Function to delete a subpage
-        function DeletePage(){
+        function DeletePage() {
             // Sprawdź, czy użytkownik jest zalogowany
-            $status_login = $this->CheckLogin();
+            if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
+                header('Location: ?idp=-1');
+                exit();
+            }
 
-            if ($status_login == 1) { // jesli zalogowano to...
-                // Sprawdź, czy podano ID do usunięcia
-                if (isset($_GET['idd'])) {
-                    // intval słuzacy do zabezpieczenia przed SQL Injection
-                    $id = intval($_GET['idd']);
-
-                    // Zapytanie do usunięcia podstrony
-                    $query = "DELETE FROM page_list WHERE id='$id' LIMIT 1";
-
-                    // sprawdzenie czy jest polaczenie z baza i czy zapytanie zostalo przetworzone poprawnie
-                    if ($GLOBALS['conn']->query($query) === TRUE) {
-                        echo "Strona została usunięta pomyślnie.";
-                        header("Location: ?idp=admin"); // Przekierowanie po udanym usunięciu na panel admina
-                        exit;
-                    } else {
-                        echo "Błąd podczas usuwania: " . $GLOBALS['conn']->error;
-                    }
+            // Sprawdź, czy podano ID do usunięcia
+            if (isset($_GET['id'])) {
+                $id = intval($_GET['id']);
+                
+                // Przygotuj i wykonaj zapytanie
+                $query = "DELETE FROM page_list WHERE id = ? LIMIT 1";
+                $stmt = $this->conn->prepare($query);
+                $stmt->bind_param('i', $id);
+                
+                if ($stmt->execute()) {
+                    $stmt->close();
+                    header("Location: ?idp=-1");
+                    exit();
                 } else {
-                    echo "Nie podano ID strony do usunięcia.";
+                    echo "Błąd podczas usuwania strony.";
                 }
             } else {
-                return $this->FormularzLogowania(); // Jeśli nie jesteś zalogowany, wyświetl formularz logowania
+                echo "Nie podano ID strony do usunięcia.";
             }
         }
 
