@@ -4,33 +4,7 @@
             <div class="sklep-kategorie">
                 <h2>Kategorie produktów</h2>
                 <ul class="kategorie-lista">
-                    <?php
-                    if (isset($conn)) {
-                        $query = "SELECT * FROM kategorie WHERE matka = 0 ORDER BY nazwa";
-                        $result = mysqli_query($conn, $query);
-
-                        while ($kategoria = mysqli_fetch_assoc($result)) {
-                            echo '<li class="kategoria-item">';
-                            echo '<a href="?idp=-10&kat=' . $kategoria['id'] . '">' . htmlspecialchars($kategoria['nazwa']) . '</a>';
-
-                            // Pobierz podkategorie
-                            $podquery = "SELECT * FROM kategorie WHERE matka = " . $kategoria['id'] . " ORDER BY nazwa";
-                            $podresult = mysqli_query($conn, $podquery);
-
-                            if (mysqli_num_rows($podresult) > 0) {
-                                echo '<ul class="podkategorie-lista">';
-                                while ($podkategoria = mysqli_fetch_assoc($podresult)) {
-                                    echo '<li class="kategoria-item">';
-                                    echo '<a href="?idp=-10&kat=' . $podkategoria['id'] . '">' . htmlspecialchars($podkategoria['nazwa']) . '</a>';
-                                    echo '</li>';
-                                }
-                                echo '</ul>';
-                            }
-
-                            echo '</li>';
-                        }
-                    }
-                    ?>
+                    
                 </ul>
             </div>
 
@@ -67,31 +41,25 @@
                                 }
 
                                 echo '<div class="produkt-karta">
-                                    <div class="produkt-zdjecie">
-                                        <img src="' . htmlspecialchars($produkt['zdjecie_url']) . '" 
-                                             alt="' . htmlspecialchars($produkt['tytul']) . '"
-                                             onerror="this.src=\'images/placeholder.jpg\'">
+                                <div class="produkt-zdjecie">
+                                    <img src="' . htmlspecialchars($produkt['zdjecie_url']) . '" 
+                                        alt="' . htmlspecialchars($produkt['tytul']) . '"
+                                        onerror="this.src='images/placeholder.jpg'">
                                     </div>
-                                    <div class="produkt-info">
-                                        <h3>' . htmlspecialchars($produkt['tytul']) . '</h3>
-                                        <p class="produkt-opis">' . htmlspecialchars($produkt['opis']) . '</p>
-                                        <div class="produkt-detale">
-                                            <span class="cena">
-                                                ' . number_format($cena_brutto, 2) . ' zł
-                                                <small>brutto</small>
-                                            </span>
-                                            <span class="status ' . $status_class . '">
-                                                ' . htmlspecialchars($produkt['status_dostepnosci']) . '
-                                            </span>
-                                        </div>
-                                        <div class="produkt-akcje">
-                                            <button class="btn-koszyk" onclick="dodajDoKoszyka(' . $produkt['id'] . ')"' .
-                                            ($status_class === 'status-niedostepny' ? ' disabled' : '') . '>
-                                                Dodaj do koszyka
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>';
+                                                                    <div class="produkt-info">
+                                                                        <h3>' . htmlspecialchars($produkt['tytul']) . '</h3>
+                                                                        <p class="produkt-opis">' . htmlspecialchars($produkt['opis']) . '</p>
+                                                                        <div class="produkt-detale">
+                                                                            <span class="cena">
+                                                                                ' . number_format($cena_brutto, 2) . ' zł
+                                                                                <small>brutto</small>
+                                                                            </span>
+                                                                            <span class="status ' . $status_class . '">
+                                                                                ' . htmlspecialchars($produkt['status_dostepnosci']) . '
+                                                                            </span>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>';
                             }
                         } else {
                             echo '<p class="brak-produktow">Brak produktów w tej kategorii.</p>';

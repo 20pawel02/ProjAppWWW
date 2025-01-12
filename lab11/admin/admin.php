@@ -361,30 +361,31 @@ include 'cfg.php'; // ladowanie pliku konfigyracyjnego
 
         // Function to delete a subpage
         function DeletePage() {
-            // Sprawdź, czy użytkownik jest zalogowany
-            if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
-                header('Location: ?idp=-1');
-                exit();
-            }
-
-            // Sprawdź, czy podano ID do usunięcia
-            if (isset($_GET['id'])) {
-                $id = intval($_GET['id']);
-                
-                // Przygotuj i wykonaj zapytanie
-                $query = "DELETE FROM page_list WHERE id = ? LIMIT 1";
-                $stmt = $this->conn->prepare($query);
-                $stmt->bind_param('i', $id);
-                
-                if ($stmt->execute()) {
-                    $stmt->close();
-                    header("Location: ?idp=-1");
-                    exit();
+            // Sprawdza, czy użytkownik jest zalogowany
+            $status_login = $this->CheckLogin(); 
+        
+            if ($status_login == 1) { 
+    
+                if (isset($_GET['idd'])) {
+                    $id = intval($_GET['idd']); 
+                    // Tworzy zapytanie do bazy danych o usunięcie strony
+                    $query = "DELETE FROM page_list WHERE id='$id' LIMIT 1";
+    
+                    // Wykonuje zapytanie i sprawdza, czy się powiodło
+                    if ($GLOBALS['conn']->query($query) === TRUE) {
+                        echo "Strona została usunięta pomyślnie.";
+                        // Przekierowuje na panel admina
+                        header("Location: ?idp=-1"); 
+                        exit;
+                    } else {
+                        echo "Błąd podczas usuwania: " . $GLOBALS['conn']->error;
+                    }
                 } else {
-                    echo "Błąd podczas usuwania strony.";
+                    echo "Nie podano ID strony do usunięcia.";
                 }
             } else {
-                echo "Nie podano ID strony do usunięcia.";
+                // Wyświetla formularz logowania, jeśli nie jest zalogowany
+                return $this->FormularzLogowania(); 
             }
         }
 
