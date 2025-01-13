@@ -967,6 +967,7 @@ table.admin tr:hover {
     font-weight: 600;
     text-align: center;
     padding: 20px 20px 10px;
+    border-bottom: 2px solid #4a90e2;
 }
 
 /* Status dostępności */
