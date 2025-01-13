@@ -70,7 +70,7 @@
             }
 
             switch ($alias) {
-                case -1:
+                case -1: // admin panel
                     if ($Admin === null){                        
                         $Admin = new Admin($conn);
                     }
@@ -84,7 +84,7 @@
                     $Admin->logoutAdmin();
                     break;
 
-                case -3:
+                case -3: // edycja strony
                     if ($Admin === null){
                         $Admin = new Admin($conn);
                     }
@@ -113,7 +113,7 @@
                     echo $Admin->DeletePage();
                     break;
                 
-                case -5:
+                case -5: // stworzenie strony
                     if($Admin === null){
                         $Admin = new Admin($conn);
                     }
@@ -124,20 +124,20 @@
                     echo $Admin->StworzPodstrone();
                     break;
 
-                case -6:
+                case -6: // przypomnij haslo
                     $contact = new Contact();
                     echo $contact->PrzypomnijHaslo("169394@student.uwm.edu.pl");
                     echo"<br></br>";
                     break;
 
-                case -7:
+                case -7: // kontakt
                     $contact = new Contact();
                     echo "<h2>Kontakt</h2>";
                     echo $contact->WyslijMailaKontakt("169394@student.uwm.edu.pl");
                     echo "<br></br>";
                     break;
 
-                case -8:
+                case -8: // zarzadzaj kategoriami
                     if ($Admin === null) {
                         $Admin = new Admin($conn);
                     }
@@ -169,10 +169,22 @@
                     echo $produkty->ZarzadzajProduktami();
                     break;
 
-                case -10:
-                    include('php/sklep.php');
-                    $sklep = new Sklep($conn);
-                    echo $sklep->PokazSklep();
+                case -10: // sklep
+                    include('php/produkty.php');
+                    $produkty = new Sklep($conn);
+                    echo $produkty->PokazSklep();
+                    break;
+
+                case -11: // Edycja produktu
+                    if ($Admin === null) {
+                        $Admin = new Admin($conn);
+                    }
+                    if (!isset($_SESSION['loggedin'])) {
+                        header('Location: ?idp=-1');
+                        exit();
+                    }
+                    $produkty = new Produkty($conn);
+                    echo $produkty->EdytujProdukt($_GET['id']);
                     break;
 
                 default:
@@ -184,8 +196,6 @@
 
         <div class="container">
             <?php
-                error_reporting(E_ALL ^ E_NOTICE ^ E_WARNING); // Ustawianie raportowania błędów
-
                 $nr_indeksu = '169394';
                 $nrGrupy = '4';
                 echo 'Autor: Paweł Wróbel ' . $nr_indeksu . ' grupa ' . $nrGrupy . ' <br /><br />';

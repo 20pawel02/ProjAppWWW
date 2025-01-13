@@ -9,14 +9,18 @@ class Produkty {
     public function ZarzadzajProduktami() {
         $output = '<div class="produkty-panel">';
 
+        // Obsługa usuwania produktu
+        if (isset($_GET['action']) && $_GET['action'] == 'usun' && isset($_GET['id'])) {
+            $this->UsunProdukt($_GET['id']);
+            header('Location: ?idp=-9');
+            exit;
+        }
+
         // Obsługa formularzy
         if (isset($_POST['action'])) {
             switch ($_POST['action']) {
                 case 'dodaj':
                     $this->DodajProdukt();
-                    break;
-                case 'usun':
-                    $this->UsunProdukt($_POST['id']);
                     break;
                 case 'edytuj':
                     $this->EdytujProdukt();
@@ -156,52 +160,117 @@ class Produkty {
         }
     }
 
-    private function UsunProdukt($id) {
+    public function UsunProdukt($id) {
         $id = intval($id);
+        
+        // Sprawdź czy produkt istnieje
+        $check_query = "SELECT id FROM produkty WHERE id = $id";
+        $check_result = mysqli_query($this->conn, $check_query);
+        
+        if (mysqli_num_rows($check_result) == 0) {
+            return false;
+        }
+        
         $query = "DELETE FROM produkty WHERE id = $id";
-        mysqli_query($this->conn, $query);
+        if (mysqli_query($this->conn, $query)) {
+            return true;
+        }
+        return false;
     }
 
-    private function EdytujProdukt() {
-        if (!isset($_POST['id']) || !isset($_POST['tytul'])) return;
-
-        try {
-            $id = intval($_POST['id']);
-            $tytul = mysqli_real_escape_string($this->conn, $_POST['tytul']);
-            $opis = mysqli_real_escape_string($this->conn, $_POST['opis']);
-            $data_wygasniecia = !empty($_POST['data_wygasniecia']) ? 
-                mysqli_real_escape_string($this->conn, $_POST['data_wygasniecia']) : NULL;
+    public function EdytujProdukt($id) {
+        $id = intval($_GET['id']);
+        
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            // Obsługa zapisywania zmian
+            $tytul = $this->conn->real_escape_string($_POST['tytul']);
+            $opis = $this->conn->real_escape_string($_POST['opis']);
             $cena_netto = floatval($_POST['cena_netto']);
             $podatek_vat = floatval($_POST['podatek_vat']);
             $ilosc_sztuk = intval($_POST['ilosc_sztuk']);
-            $status_dostepnosci = mysqli_real_escape_string($this->conn, $_POST['status_dostepnosci']);
-            $kategoria_id = !empty($_POST['kategoria_id']) ? intval($_POST['kategoria_id']) : NULL;
-            $gabaryt = mysqli_real_escape_string($this->conn, $_POST['gabaryt']);
-            $zdjecie_url = mysqli_real_escape_string($this->conn, $_POST['zdjecie_url']);
-
-        $query = "UPDATE produkty SET 
-                        tytul = '$tytul',
-                        opis = '$opis',
-                        data_wygasniecia = " . ($data_wygasniecia ? "'$data_wygasniecia'" : "NULL") . ",
-                        cena_netto = $cena_netto,
-                        podatek_vat = $podatek_vat,
-                        ilosc_sztuk = $ilosc_sztuk,
-                        status_dostepnosci = '$status_dostepnosci',
-                        kategoria_id = " . ($kategoria_id ? "$kategoria_id" : "NULL") . ",
-                        gabaryt = '$gabaryt',
-                        zdjecie_url = '$zdjecie_url'
-                    WHERE id = $id";
-
-            if (!mysqli_query($this->conn, $query)) {
-                throw new Exception("Błąd podczas aktualizacji produktu: " . mysqli_error($this->conn));
-            }
+            $status = $this->conn->real_escape_string($_POST['status_dostepnosci']);
+            $kategoria_id = intval($_POST['kategoria_id']);
             
-            return true;
-
-        } catch (Exception $e) {
-            echo '<div class="error">Wystąpił błąd: ' . $e->getMessage() . '</div>';
-            return false;
+            $query = "UPDATE produkty SET 
+                     tytul = '$tytul',
+                     opis = '$opis',
+                     cena_netto = $cena_netto,
+                     podatek_vat = $podatek_vat,
+                     ilosc_sztuk = $ilosc_sztuk,
+                     status_dostepnosci = '$status',
+                     kategoria_id = $kategoria_id,
+                     data_modyfikacji = NOW()
+                     WHERE id = $id";
+                     
+            if ($this->conn->query($query)) {
+                header("Location: ?idp=-9");
+                exit;
+            }
         }
+        
+        // Pobierz dane produktu
+        $query = "SELECT * FROM produkty WHERE id = $id";
+        $result = $this->conn->query($query);
+        $produkt = $result->fetch_assoc();
+        
+        // Formularz edycji
+        $output = '<div class="form-container">
+            <h2>Edycja produktu</h2>
+            <form method="post">
+                <div class="form-group">
+                    <label>Tytuł:</label>
+                    <input type="text" name="tytul" value="' . htmlspecialchars($produkt['tytul']) . '" required>
+                </div>
+                
+                <div class="form-group">
+                    <label>Opis:</label>
+                    <textarea name="opis" required>' . htmlspecialchars($produkt['opis']) . '</textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label>Cena netto:</label>
+                    <input type="number" step="0.01" name="cena_netto" value="' . $produkt['cena_netto'] . '" required>
+                </div>
+                
+                <div class="form-group">
+                    <label>VAT (%):</label>
+                    <input type="number" step="0.01" name="podatek_vat" value="' . $produkt['podatek_vat'] . '" required>
+                </div>
+                
+                <div class="form-group">
+                    <label>Ilość sztuk:</label>
+                    <input type="number" name="ilosc_sztuk" value="' . $produkt['ilosc_sztuk'] . '" required>
+                </div>
+                
+                <div class="form-group">
+                    <label>Status dostępności:</label>
+                    <select name="status_dostepnosci">
+                        <option value="dostępny" ' . ($produkt['status_dostepnosci'] == 'dostępny' ? 'selected' : '') . '>Dostępny</option>
+                        <option value="niedostępny" ' . ($produkt['status_dostepnosci'] == 'niedostępny' ? 'selected' : '') . '>Niedostępny</option>
+                        <option value="oczekujący" ' . ($produkt['status_dostepnosci'] == 'oczekujący' ? 'selected' : '') . '>Oczekujący</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label>Kategoria:</label>
+                    <select name="kategoria_id" required>';
+        
+        // Pobierz kategorie
+        $kat_query = "SELECT id, nazwa FROM kategorie ORDER BY nazwa";
+        $kat_result = $this->conn->query($kat_query);
+        while ($kat = $kat_result->fetch_assoc()) {
+            $selected = ($kat['id'] == $produkt['kategoria_id']) ? 'selected' : '';
+            $output .= '<option value="' . $kat['id'] . '" ' . $selected . '>' . htmlspecialchars($kat['nazwa']) . '</option>';
+        }
+        
+        $output .= '</select>
+                </div>
+                
+                <button type="submit" class="btn-zapisz">Zapisz zmiany</button>
+            </form>
+        </div>';
+        
+        return $output;
     }
 
     private function PokazProdukty() {
@@ -212,15 +281,20 @@ class Produkty {
         $result = mysqli_query($this->conn, $query);
 
         $output = '<h2>Lista produktów</h2>
+        <div class="table-responsive">
         <table border="1">
             <tr>
                 <th>ID</th>
                 <th>Tytuł</th>
+                <th>Data modyfikacji</th>
+                <th>Data wygaśnięcia</th>
                 <th>Cena netto</th>
                 <th>VAT</th>
-                <th>Ilość</th>
+                <th>Ilość sztuk</th>
                 <th>Status</th>
                 <th>Kategoria</th>
+                <th>Gabaryt</th>
+                <th>Zdjęcie</th>
                 <th>Akcje</th>
             </tr>';
 
@@ -228,63 +302,25 @@ class Produkty {
             $output .= '<tr>
                 <td>' . $row['id'] . '</td>
                 <td>' . htmlspecialchars($row['tytul']) . '</td>
+                <td>' . ($row['data_modyfikacji'] ? date('Y-m-d H:i', strtotime($row['data_modyfikacji'])) : '-') . '</td>
+                <td>' . ($row['data_wygasniecia'] ? date('Y-m-d', strtotime($row['data_wygasniecia'])) : '-') . '</td>
                 <td>' . number_format($row['cena_netto'], 2) . ' zł</td>
                 <td>' . $row['podatek_vat'] . '%</td>
                 <td>' . $row['ilosc_sztuk'] . '</td>
                 <td>' . $row['status_dostepnosci'] . '</td>
                 <td>' . htmlspecialchars($row['kategoria_nazwa']) . '</td>
-                <td class="akcje">
-                    <form method="POST" style="display:inline;">
-                        <input type="hidden" name="action" value="usun">
-                        <input type="hidden" name="id" value="' . $row['id'] . '">
-                        <input type="submit" class="usun" value="Usuń">
-                    </form>
-                    <button class="edytuj" onclick="edytujProdukt(' . $row['id'] . ', ' . 
-                        htmlspecialchars(json_encode([
-                            'tytul' => $row['tytul'],
-                            'opis' => $row['opis'],
-                            'data_wygasniecia' => $row['data_wygasniecia'],
-                            'cena_netto' => $row['cena_netto'],
-                            'podatek_vat' => $row['podatek_vat'],
-                            'ilosc_sztuk' => $row['ilosc_sztuk'],
-                            'status_dostepnosci' => $row['status_dostepnosci'],
-                            'kategoria_id' => $row['kategoria_id'],
-                            'gabaryt' => $row['gabaryt'],
-                            'zdjecie_url' => $row['zdjecie_url']
-                        ]), JSON_HEX_APOS | JSON_HEX_QUOT) . 
-                    ')">Edytuj</button>
+                <td>' . htmlspecialchars($row['gabaryt']) . '</td>
+                <td>' . ($row['zdjecie_url'] ? '<img src="' . htmlspecialchars($row['zdjecie_url']) . '" alt="Produkt" style="max-width: 50px;">' : '-') . '</td>
+                <td>
+                    <a href="?idp=-11&id=' . $row['id'] . '" class="btn-edytuj">Edytuj</a>
+                    <a href="?idp=-9&action=usun&id=' . $row['id'] . '" class="btn-usun" 
+                       onclick="return confirm(\'Czy na pewno chcesz usunąć ten produkt?\')">Usuń</a>
                 </td>
             </tr>';
         }
 
-        $output .= '</table>';
+        $output .= '</table></div>';
         
-        // Dodaj skrypt JavaScript do obsługi edycji
-        $output .= '
-        <script>
-        function edytujProdukt(id, dane) {
-            // Wypełnij formularz danymi produktu
-            document.querySelector(\'input[name="action"]\').value = "edytuj";
-            document.querySelector(\'input[name="id"]\').value = id;
-            document.querySelector(\'input[name="tytul"]\').value = dane.tytul;
-            document.querySelector(\'textarea[name="opis"]\').value = dane.opis;
-            document.querySelector(\'input[name="data_wygasniecia"]\').value = dane.data_wygasniecia;
-            document.querySelector(\'input[name="cena_netto"]\').value = dane.cena_netto;
-            document.querySelector(\'input[name="podatek_vat"]\').value = dane.podatek_vat;
-            document.querySelector(\'input[name="ilosc_sztuk"]\').value = dane.ilosc_sztuk;
-            document.querySelector(\'select[name="status_dostepnosci"]\').value = dane.status_dostepnosci;
-            document.querySelector(\'select[name="kategoria_id"]\').value = dane.kategoria_id;
-            document.querySelector(\'input[name="gabaryt"]\').value = dane.gabaryt;
-            document.querySelector(\'input[name="zdjecie_url"]\').value = dane.zdjecie_url;
-            
-            // Przewiń do formularza
-            document.querySelector(\'.produkty-panel form\').scrollIntoView({ behavior: \'smooth\' });
-            
-            // Zmień tekst przycisku submit
-            document.querySelector(\'.produkty-panel form input[type="submit"]\').value = "Aktualizuj produkt";
-        }
-        </script>';
-
         return $output;
     }
 }
