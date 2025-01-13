@@ -136,7 +136,7 @@ include 'cfg.php'; // ladowanie pliku konfigyracyjnego
                             <td>{$title}</td>
                             <td>
                                 <a href='index.php?idp=-3&id={$id}'>Edytuj</a> | 
-                                <a href='../index.php?idp=-4&id={$id}' onclick='return confirm(\"Czy na pewno chcesz usunąć tę podstronę?\")'>Usuń</a>
+                                <a href='index.php?idp=-4&idd={$id}' onclick='return confirm(\"Czy na pewno chcesz usunąć tę podstronę?\")'>Usuń</a>
                             </td>
                         </tr>";
                 }
@@ -157,22 +157,21 @@ include 'cfg.php'; // ladowanie pliku konfigyracyjnego
                 if (isset($_GET['ide'])) {
 
                     // sprawdzenie czy formularz jest wysłany metoda POST i czy wymagane dane sa wprowadzone
-                    if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['edit_title'], $_POST['edit_content'], $_POST['edit_alias'])) {
+                    if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['edit_title'], $_POST['edit_content'])) {
                         // przygotwanie danych do zmiany: tytuł, zawartość, aktywność, alias lub id, zachowanie bezpieczenstwa po przez real_escape_string lub intval
                         $title = $GLOBALS['conn']->real_escape_string($_POST['edit_title']);
                         $content = $GLOBALS['conn']->real_escape_string($_POST['edit_content']);
                         $active = isset($_POST['edit_active']) ? 1 : 0;
-                        $alias = $GLOBALS['conn']->real_escape_string($_POST['edit_alias']);
                         $id = intval($_GET['ide']);
 
                         // Zapytanie SQL aktualizujace dane podstrony
-                        $query = "UPDATE page_list SET page_title='$title', page_content='$content', status='$active', alias='$alias' WHERE id='$id' LIMIT 1";
+                        $query = "UPDATE page_list SET page_title='$title', page_content='$content', status='$active' WHERE id='$id' LIMIT 1";
 
                         // sprawdzenie czy jest polaczenie z baza i czy zapytanie zostalo przetworzone poprawnie
                         if ($GLOBALS['conn']->query($query) === TRUE) {
                             echo "Strona została zaktualizowana pomyślnie.";
                             // przekierowanie na panel admina
-                            header("Location: ?idp=-1   ");
+                            header("Location: ?idp=-1");
                             exit;
                         } else {
                             // komunikat o błedzie podczas aktualizacji
@@ -201,10 +200,7 @@ include 'cfg.php'; // ladowanie pliku konfigyracyjnego
                                                 <textarea id="edit_content" name="edit_content" rows="10" required>' . htmlspecialchars($row['page_content']) . '</textarea>
                                             </div>
                                             
-                                            <div class="form-group">
-                                                <label for="edit_alias">Alias strony</label>
-                                                <input type="text" id="edit_alias" name="edit_alias" value="' . (isset($row['page_alias']) ? htmlspecialchars($row['page_alias']) : '') . '" required />
-                                            </div>
+                                            
                                             
                                             <div class="form-group">
                                                 <label>
@@ -363,14 +359,14 @@ include 'cfg.php'; // ladowanie pliku konfigyracyjnego
         function DeletePage() {
             // Sprawdza, czy użytkownik jest zalogowany
             $status_login = $this->CheckLogin(); 
-        
+
             if ($status_login == 1) { 
-    
                 if (isset($_GET['idd'])) {
                     $id = intval($_GET['idd']); 
+                    
                     // Tworzy zapytanie do bazy danych o usunięcie strony
                     $query = "DELETE FROM page_list WHERE id='$id' LIMIT 1";
-    
+
                     // Wykonuje zapytanie i sprawdza, czy się powiodło
                     if ($GLOBALS['conn']->query($query) === TRUE) {
                         echo "Strona została usunięta pomyślnie.";
@@ -389,260 +385,6 @@ include 'cfg.php'; // ladowanie pliku konfigyracyjnego
             }
         }
 
-        // Metoda zarządzania kategoriami produktów
-        function ZarzadzajKategoriami() {
-            // Sprawdzenie, czy użytkownik jest zalogowany
-            if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
-                return 'Brak dostępu. Zaloguj się.';
-            }
-
-            // Obsługa akcji związanych z kategoriami
-            if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-                // Dodawanie kategorii
-                if (isset($_POST['add_category'])) {
-                    $name = $_POST['category_name'] ?? '';
-                    $mother_id = intval($_POST['mother_category'] ?? 0);
-                    $description = $_POST['category_description'] ?? '';
-
-                    if (!empty($name)) {
-                        $query = "INSERT INTO product_categories (name, mother_id, description) 
-                                  VALUES ('" . $GLOBALS['conn']->real_escape_string($name) . "', 
-                                          $mother_id, 
-                                          '" . $GLOBALS['conn']->real_escape_string($description) . "')";
-                        
-                        if ($GLOBALS['conn']->query($query)) {
-                            $message = "Kategoria została dodana pomyślnie.";
-                        } else {
-                            $message = "Błąd podczas dodawania kategorii: " . $GLOBALS['conn']->error;
-                        }
-                    }
-                }
-
-                // Edycja kategorii
-                if (isset($_POST['edit_category'])) {
-                    $category_id = intval($_POST['category_id'] ?? 0);
-                    $name = $_POST['category_name'] ?? '';
-                    $mother_id = intval($_POST['mother_category'] ?? 0);
-                    $description = $_POST['category_description'] ?? '';
-
-                    if ($category_id > 0 && !empty($name)) {
-                        $query = "UPDATE product_categories 
-                                  SET name = '" . $GLOBALS['conn']->real_escape_string($name) . "', 
-                                      mother_id = $mother_id, 
-                                      description = '" . $GLOBALS['conn']->real_escape_string($description) . "' 
-                                  WHERE id = $category_id";
-                        
-                        if ($GLOBALS['conn']->query($query)) {
-                            $message = "Kategoria została zaktualizowana pomyślnie.";
-                        } else {
-                            $message = "Błąd podczas aktualizacji kategorii: " . $GLOBALS['conn']->error;
-                        }
-                    }
-                }
-
-                // Usuwanie kategorii
-                if (isset($_POST['delete_category'])) {
-                    $category_id = intval($_POST['category_id'] ?? 0);
-                    $recursive = isset($_POST['recursive_delete']) ? 1 : 0;
-
-                    if ($category_id > 0) {
-                        if ($recursive) {
-                            // Rekurencyjne usuwanie podkategorii
-                            $this->usunPodkategorie($category_id);
-                        }
-
-                        $query = "DELETE FROM product_categories WHERE id = $category_id";
-                        
-                        if ($GLOBALS['conn']->query($query)) {
-                            $message = "Kategoria została usunięta pomyślnie.";
-                        } else {
-                            $message = "Błąd podczas usuwania kategorii: " . $GLOBALS['conn']->error;
-                        }
-                    }
-                }
-            }
-
-            // Pobieranie listy kategorii do formularza
-            $categories_query = "SELECT id, name, mother_id FROM product_categories ORDER BY mother_id, name";
-            $categories_result = $GLOBALS['conn']->query($categories_query);
-            $categories = [];
-            $root_categories = [];
-
-            while ($row = $categories_result->fetch_assoc()) {
-                $categories[$row['id']] = $row;
-                if ($row['mother_id'] == 0) {
-                    $root_categories[] = $row;
-                }
-            }
-
-            // Generowanie formularza zarządzania kategoriami
-            $form = '
-            <div class="edit-container">
-                <h3 class="edit-title">Zarządzanie Kategoriami Produktów</h3>
-                
-                ' . (!empty($message) ? '<div class="alert alert-info">' . htmlspecialchars($message) . '</div>' : '') . '
-                
-                <div class="category-management">
-                    <div class="category-list">
-                        <h4>Istniejące Kategorie</h4>
-                        <ul class="category-tree">';
-            
-            // Generowanie drzewa kategorii
-            foreach ($root_categories as $root) {
-                $form .= '<li>' . htmlspecialchars($root['name']);
-                
-                // Dodaj podkategorie
-                $form .= $this->generujPodkategorie($categories, $root['id']);
-                
-                $form .= '</li>';
-            }
-            
-            $form .= '</ul>
-                    </div>
-                    
-                    <div class="category-forms">
-                        <div class="add-category-form">
-                            <h4>Dodaj Kategorię</h4>
-                            <form method="post" action="' . $_SERVER['REQUEST_URI'] . '">
-                                <div class="form-group">
-                                    <label for="category_name">Nazwa Kategorii</label>
-                                    <input type="text" id="category_name" name="category_name" required>
-                                </div>
-                                
-                                <div class="form-group">
-                                    <label for="mother_category">Kategoria Nadrzędna</label>
-                                    <select id="mother_category" name="mother_category">
-                                        <option value="0">Kategoria Główna</option>';
-            
-            foreach ($root_categories as $root) {
-                $form .= '<option value="' . $root['id'] . '">' . htmlspecialchars($root['name']) . '</option>';
-            }
-            
-            $form .= '</select>
-                                </div>
-                                
-                                <div class="form-group">
-                                    <label for="category_description">Opis Kategorii</label>
-                                    <textarea id="category_description" name="category_description"></textarea>
-                                </div>
-                                
-                                <input type="submit" name="add_category" value="Dodaj Kategorię" class="submit-button">
-                            </form>
-                        </div>
-                        
-                        <div class="edit-category-form">
-                            <h4>Edytuj Kategorię</h4>
-                            <form method="post" action="' . $_SERVER['REQUEST_URI'] . '">
-                                <div class="form-group">
-                                    <label for="edit_category_select">Wybierz Kategorię</label>
-                                    <select id="edit_category_select" name="category_id" required>
-                                        <option value="">Wybierz kategorię</option>';
-            
-            foreach ($categories as $category) {
-                $form .= '<option value="' . $category['id'] . '">' . 
-                         ($category['mother_id'] == 0 ? '' : '— ') . 
-                         htmlspecialchars($category['name']) . 
-                         '</option>';
-            }
-            
-            $form .= '</select>
-                                </div>
-                                
-                                <div class="form-group">
-                                    <label for="edit_category_name">Nowa Nazwa Kategorii</label>
-                                    <input type="text" id="edit_category_name" name="category_name" required>
-                                </div>
-                                
-                                <div class="form-group">
-                                    <label for="edit_mother_category">Nowa Kategoria Nadrzędna</label>
-                                    <select id="edit_mother_category" name="mother_category">
-                                        <option value="0">Kategoria Główna</option>';
-            
-            foreach ($root_categories as $root) {
-                $form .= '<option value="' . $root['id'] . '">' . htmlspecialchars($root['name']) . '</option>';
-            }
-            
-            $form .= '</select>
-                                </div>
-                                
-                                <div class="form-group">
-                                    <label for="edit_category_description">Nowy Opis Kategorii</label>
-                                    <textarea id="edit_category_description" name="category_description"></textarea>
-                                </div>
-                                
-                                <input type="submit" name="edit_category" value="Aktualizuj Kategorię" class="submit-button">
-                            </form>
-                        </div>
-                        
-                        <div class="delete-category-form">
-                            <h4>Usuń Kategorię</h4>
-                            <form method="post" action="' . $_SERVER['REQUEST_URI'] . '">
-                                <div class="form-group">
-                                    <label for="delete_category_select">Wybierz Kategorię do Usunięcia</label>
-                                    <select id="delete_category_select" name="category_id" required>
-                                        <option value="">Wybierz kategorię</option>';
-            
-            foreach ($categories as $category) {
-                $form .= '<option value="' . $category['id'] . '">' . 
-                         ($category['mother_id'] == 0 ? '' : '— ') . 
-                         htmlspecialchars($category['name']) . 
-                         '</option>';
-            }
-            
-            $form .= '</select>
-                                </div>
-                                
-                                <div class="form-group">
-                                    <label>
-                                        <input type="checkbox" name="recursive_delete"> 
-                                        Usuń również podkategorie
-                                    </label>
-                                </div>
-                                
-                                <input type="submit" name="delete_category" value="Usuń Kategorię" class="submit-button">
-                            </form>
-                        </div>
-                    </div>
-                </div>
-            </div>';
-
-            return $form;
-        }
-
-        // Metoda generująca podkategorie rekurencyjnie
-        private function generujPodkategorie($categories, $mother_id) {
-            $subcategories = array_filter($categories, function($cat) use ($mother_id) {
-                return $cat['mother_id'] == $mother_id;
-            });
-
-            if (empty($subcategories)) {
-                return '';
-            }
-
-            $output = '<ul>';
-            foreach ($subcategories as $subcategory) {
-                $output .= '<li>' . htmlspecialchars($subcategory['name']);
-                $output .= $this->generujPodkategorie($categories, $subcategory['id']);
-                $output .= '</li>';
-            }
-            $output .= '</ul>';
-
-            return $output;
-        }
-
-        // Metoda usuwająca podkategorie rekurencyjnie
-        private function usunPodkategorie($mother_id) {
-            $query = "SELECT id FROM product_categories WHERE mother_id = " . intval($mother_id);
-            $result = $GLOBALS['conn']->query($query);
-
-            while ($row = $result->fetch_assoc()) {
-                // Rekurencyjne usuwanie podkategorii
-                $this->usunPodkategorie($row['id']);
-                
-                // Usuwanie konkretnej podkategorii
-                $delete_query = "DELETE FROM product_categories WHERE id = " . intval($row['id']);
-                $GLOBALS['conn']->query($delete_query);
-            }
-        }
+      
     }
 ?>

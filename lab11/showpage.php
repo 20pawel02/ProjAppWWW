@@ -8,12 +8,12 @@ include('cfg.php');
 // @return string Treść strony lub komunikat o braku strony.
 // ----------------------------------------------------------------
 
-function PokazStrone($alias) {
+function PokazStrone($id) {
     global $conn;
-    $alias_clear = htmlspecialchars($alias); // ochrona przed atakami typu XSS
+    $id_clear = htmlspecialchars($id); // ochrona przed atakami typu XSS
 
     // Specjalna obsługa dla panelu administracyjnego
-    if ($alias_clear == -1) {
+    if ($id_clear == -1) {
         // Sprawdzenie, czy użytkownik jest zalogowany
         if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
             return '[brak_dostepu]';
@@ -34,7 +34,7 @@ function PokazStrone($alias) {
 
     $query = "SELECT * FROM page_list WHERE id = ? LIMIT 1";
     $stmt = $conn->prepare($query); // przygotowanie zapytania sql
-    $stmt->bind_param("s", $alias_clear); // powiazanie parametru z zapytaniem
+    $stmt->bind_param("s", $id_clear); // powiazanie parametru z zapytaniem
 
     $stmt->execute(); // wykonanie zapytania 
     $result = $stmt->get_result(); // pobranie wynikow zapytania

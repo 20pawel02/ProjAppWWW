@@ -107,7 +107,7 @@
                         $Admin = new Admin($conn);
                     }
                     if(!isset($_SESSION['loggedin'])){
-                        header('Location: ?idp=admin');
+                        header('Location: ?idp=-1');
                         exit();
                     }
                     echo $Admin->DeletePage();
@@ -118,7 +118,7 @@
                         $Admin = new Admin($conn);
                     }
                     if(!isset($_SESSION['loggedin'])){
-                        header('Location: ?idp=admin');
+                        header('Location: ?idp=-1');
                         exit();
                     }
                     echo $Admin->StworzPodstrone();
@@ -142,7 +142,7 @@
                         $Admin = new Admin($conn);
                     }
                     if (!isset($_SESSION['loggedin'])) {
-                        header('Location: ?idp=admin');
+                        header('Location: ?idp=-1');
                         exit();
                     }
                     $kategorie = new Kategorie($conn);
