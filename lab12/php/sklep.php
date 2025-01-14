@@ -7,8 +7,8 @@ class Sklep {
     }
 
     public function PokazSklep() {
-        $output = '<div class="sklep-container">
-            <h1 style="color: red;">Test widoczności zmian</h1>';
+        $output = '<div class="sklep-container" style="background-color: rgba(255, 255, 255, 0.9); padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+            <h1 style="color: red;">Sklep internetowy</h1>';
         
         // Dodaj panel kategorii
         $output .= $this->PokazKategorie();
@@ -55,40 +55,52 @@ class Sklep {
         
         $result = mysqli_query($this->conn, $query);
         
-        $output = '';
+        $output = '<div style="background-color: rgba(255, 255, 255, 0.95); padding: 20px; border-radius: 8px; margin: 20px 0; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Zdjęcie</th>
+                        <th>Nazwa</th>
+                        <th>Opis</th>
+                        <th>Kategoria</th>
+                        <th>Cena netto</th>
+                        <th>VAT</th>
+                        <th>Cena brutto</th>
+                        <th>Status</th>
+                        <th>Akcje</th>
+                    </tr>
+                </thead>
+                <tbody>';
+        
         if (mysqli_num_rows($result) > 0) {
             while ($row = mysqli_fetch_assoc($result)) {
-                $output .= $this->GenerujKarteProduktu($row);
+                $output .= $this->GenerujWierszProduktu($row);
             }
         } else {
-            $output .= '<div class="brak-produktow">
-                <p>Brak dostępnych produktów w tej kategorii.</p>
-            </div>';
+            $output .= '<tr><td colspan="9" class="text-center">Brak dostępnych produktów w tej kategorii.</td></tr>';
         }
         
+        $output .= '</tbody></table></div>';
         return $output;
     }
 
-    private function GenerujKarteProduktu($produkt) {
+    private function GenerujWierszProduktu($produkt) {
         $cena_brutto = $produkt['cena_netto'] * (1 + $produkt['podatek_vat']/100);
         
-        return '<div class="produkt-karta">
-            <div class="produkt-zdjecie">
+        return '<tr>
+            <td class="produkt-zdjecie">
                 ' . ($produkt['zdjecie_url'] ? 
                     '<img src="' . htmlspecialchars($produkt['zdjecie_url']) . '" alt="' . htmlspecialchars($produkt['tytul']) . '">' : 
                     '<div class="brak-zdjecia">Brak zdjęcia</div>') . '
-            </div>
-            <div class="produkt-info">
-                <h3>' . htmlspecialchars($produkt['tytul']) . '</h3>
-                <div class="produkt-opis">' . htmlspecialchars($produkt['opis']) . '</div>
-                <div class="produkt-detale">
-                    <div class="produkt-cena">
-                        <div>Cena netto: ' . number_format($produkt['cena_netto'], 2) . ' zł</div>
-                        <div>VAT: ' . $produkt['podatek_vat'] . '%</div>
-                        <div>Cena brutto: ' . number_format($cena_brutto, 2) . ' zł</div>
-                    </div>
-                    <div class="produkt-status">' . $produkt['status_dostepnosci'] . '</div>
-                </div>
+            </td>
+            <td>' . htmlspecialchars($produkt['tytul']) . '</td>
+            <td>' . htmlspecialchars($produkt['opis']) . '</td>
+            <td>' . htmlspecialchars($produkt['kategoria_nazwa']) . '</td>
+            <td>' . number_format($produkt['cena_netto'], 2) . ' zł</td>
+            <td>' . $produkt['podatek_vat'] . '%</td>
+            <td>' . number_format($cena_brutto, 2) . ' zł</td>
+            <td>' . $produkt['status_dostepnosci'] . '</td>
+            <td>
                 <form method="post" action="?idp=-12" class="form-koszyk">
                     <input type="hidden" name="action" value="dodaj">
                     <input type="hidden" name="produkt_id" value="' . $produkt['id'] . '">
@@ -97,8 +109,8 @@ class Sklep {
                         Dodaj do koszyka
                     </button>
                 </form>
-            </div>
-        </div>';
+            </td>
+        </tr>';
     }
 }
 ?> 

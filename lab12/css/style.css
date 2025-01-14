@@ -800,3 +800,21 @@ table.admin tr:hover {
     background-color: #555;
     text-decoration: none;
 }
+
+.produkt-zdjecie img {
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+    border-radius: 4px;
+}
+
+.produkt-zdjecie .brak-zdjecia {
+    width: 100px;
+    height: 100px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #f5f5f5;
+    border-radius: 4px;
+    font-size: 12px;
+}

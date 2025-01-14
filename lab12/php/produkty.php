@@ -7,7 +7,7 @@ class Produkty {
     }
 
     public function ZarzadzajProduktami() {
-        $output = '<div class="produkty-panel">';
+        $output = '<div class="produkty-panel" style="background-color: rgba(255, 255, 255, 0.95); padding: 20px; border-radius: 8px; margin: 20px 0; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">';
 
         // Obsługa usuwania produktu
         if (isset($_GET['action']) && $_GET['action'] == 'usun' && isset($_GET['id'])) {

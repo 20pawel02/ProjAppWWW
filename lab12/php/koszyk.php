@@ -54,72 +54,29 @@ class Koszyk {
     }
 
     public function PokazKoszyk() {
-        $output = '<div class="koszyk-container" style="border: 3px solid red;">
-            <h1 style="color: red;">Test widoczności zmian w koszyku</h1>';
+        $output = '<div class="koszyk-container" style="background-color: rgba(255, 255, 255, 0.95); padding: 20px; border-radius: 8px; margin: 20px 0; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+            <h2>Twój koszyk</h2>';
         
-        // Dodaj skrypt JavaScript dla obsługi przycisków
-        $output .= '
-        <script>
-            function aktualizujIlosc(produkt_id, ilosc) {
-                const form = document.createElement("form");
-                form.method = "POST";
-                form.action = "?idp=-12";
-                
-                const actionInput = document.createElement("input");
-                actionInput.type = "hidden";
-                actionInput.name = "action";
-                actionInput.value = "aktualizuj";
-                
-                const produktInput = document.createElement("input");
-                produktInput.type = "hidden";
-                produktInput.name = "produkt_id";
-                produktInput.value = produkt_id;
-                
-                const iloscInput = document.createElement("input");
-                iloscInput.type = "hidden";
-                iloscInput.name = "ilosc";
-                iloscInput.value = ilosc;
-                
-                form.appendChild(actionInput);
-                form.appendChild(produktInput);
-                form.appendChild(iloscInput);
-                
-                document.body.appendChild(form);
-                form.submit();
-            }
-            
-            function usunZKoszyka(produkt_id) {
-                if (confirm("Czy na pewno chcesz usunąć ten produkt z koszyka?")) {
-                    const form = document.createElement("form");
-                    form.method = "POST";
-                    form.action = "?idp=-12";
-                    
-                    const actionInput = document.createElement("input");
-                    actionInput.type = "hidden";
-                    actionInput.name = "action";
-                    actionInput.value = "usun";
-                    
-                    const produktInput = document.createElement("input");
-                    produktInput.type = "hidden";
-                    produktInput.name = "produkt_id";
-                    produktInput.value = produkt_id;
-                    
-                    form.appendChild(actionInput);
-                    form.appendChild(produktInput);
-                    
-                    document.body.appendChild(form);
-                    form.submit();
-                }
-            }
-        </script>';
-
         if (empty($_SESSION['koszyk'])) {
             $output .= '<div class="koszyk-pusty">
                 <h2>Twój koszyk jest pusty</h2>
                 <a href="?idp=-10" class="btn-kontynuuj">Przejdź do sklepu</a>
             </div>';
         } else {
-            $output .= '<h2>Twój koszyk</h2><div class="koszyk-produkty">';
+            $output .= '<table class="table">
+                <thead>
+                    <tr>
+                        <th>Zdjęcie</th>
+                        <th>Nazwa</th>
+                        <th>Cena netto</th>
+                        <th>VAT</th>
+                        <th>Cena brutto</th>
+                        <th>Ilość</th>
+                        <th>Suma</th>
+                        <th>Akcje</th>
+                    </tr>
+                </thead>
+                <tbody>';
             
             $suma = 0;
             foreach ($_SESSION['koszyk'] as $produkt_id => $ilosc) {
@@ -135,7 +92,7 @@ class Koszyk {
                 }
             }
             
-            $output .= '</div>
+            $output .= '</tbody></table>
             <div class="koszyk-podsumowanie">
                 <div class="suma">Suma: ' . number_format($suma, 2) . ' zł</div>
                 <div class="koszyk-przyciski">
@@ -150,33 +107,27 @@ class Koszyk {
     }
 
     private function GenerujProduktKoszyka($produkt, $ilosc, $cena_brutto, $suma_produktu) {
-        return '<div class="koszyk-produkt">
-            <div class="produkt-zdjecie">
+        return '<tr>
+            <td class="produkt-zdjecie">
                 ' . ($produkt['zdjecie_url'] ? 
                     '<img src="' . htmlspecialchars($produkt['zdjecie_url']) . '" alt="' . htmlspecialchars($produkt['tytul']) . '">' : 
                     '<div class="brak-zdjecia">Brak zdjęcia</div>') . '
-            </div>
-            <div class="produkt-info">
-                <h3>' . htmlspecialchars($produkt['tytul']) . '</h3>
-                <div class="produkt-cena">
-                    <div>Cena netto: ' . number_format($produkt['cena_netto'], 2) . ' zł</div>
-                    <div>VAT: ' . $produkt['podatek_vat'] . '%</div>
-                    <div>Cena brutto: ' . number_format($cena_brutto, 2) . ' zł</div>
-                </div>
-            </div>
-            <div class="produkt-ilosc">
-                <label>Ilość:</label>
+            </td>
+            <td>' . htmlspecialchars($produkt['tytul']) . '</td>
+            <td>' . number_format($produkt['cena_netto'], 2) . ' zł</td>
+            <td>' . $produkt['podatek_vat'] . '%</td>
+            <td>' . number_format($cena_brutto, 2) . ' zł</td>
+            <td class="produkt-ilosc">
                 <button onclick="aktualizujIlosc(' . $produkt['id'] . ', ' . ($ilosc-1) . ')" class="btn-ilosc">-</button>
                 <span>' . $ilosc . '</span>
                 <button onclick="aktualizujIlosc(' . $produkt['id'] . ', ' . ($ilosc+1) . ')" class="btn-ilosc">+</button>
                 <div class="max-ilosc">(max: ' . $produkt['ilosc_sztuk'] . ' szt.)</div>
-            </div>
-            <div class="produkt-suma">
-                <div>Suma:</div>
-                ' . number_format($suma_produktu, 2) . ' zł
-            </div>
-            <button onclick="usunZKoszyka(' . $produkt['id'] . ')" class="btn-usun">Usuń</button>
-        </div>';
+            </td>
+            <td>' . number_format($suma_produktu, 2) . ' zł</td>
+            <td>
+                <button onclick="usunZKoszyka(' . $produkt['id'] . ')" class="btn-usun">Usuń</button>
+            </td>
+        </tr>';
     }
 
     private function SprawdzDostepnosc($produkt_id, $ilosc) {
