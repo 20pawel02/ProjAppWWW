@@ -1,19 +1,25 @@
 /* --------------------------------------------------- */
 /* ------------------- Global styles ----------------- */
 /* --------------------------------------------------- */
+:root {
+    --table-font-size-small: 12px;
+    --table-font-size-medium: 14px;
+    --table-font-size-large: 16px;
+}
+
 body {
     font-family: Arial, sans-serif;
     background-image: url('../images/tlo.jpeg');
     background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
     color: #000;
     margin: 0;
     padding: 0;
-    background-position: center;
-    background-attachment: fixed;
 }
 
 div {
-    margin: 200px 0;
+    margin: 0;
     padding: 10px;
 }
 
@@ -46,7 +52,7 @@ div {
 /* --------------------------------------------------- */
 
 header {
-    background-color: #333;
+    background-color: rgba(51, 51, 51, 0.9);
     color: white;
     text-align: center;
     padding: 20px;
@@ -54,6 +60,7 @@ header {
     display: flex;
     align-items: center;
     justify-content: center;
+    margin-bottom: 20px;
 }
 
 header nav {
@@ -123,15 +130,13 @@ nav ul li a:hover {
 /* --------------- Container styles ------------------ */
 /* --------------------------------------------------- */
 
-.container {
-    width: 80%;
-    margin: auto;
+.content {
     background-color: rgba(255, 255, 255, 0.8);
     padding: 20px;
     border-radius: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    position: relative;
-    top: 50px;
+    margin: 20px auto;
+    max-width: 1200px;
 }
 
 /* --------------------------------------------------- */
@@ -189,9 +194,9 @@ img.float-right {
 /* --------------------------------------------------- */
 
 table {
-    width: 100%;
-    margin-top: 20px;
-    border-collapse: collapse;
+    background-color: rgba(255, 255, 255, 0.9);
+    border-radius: 5px;
+    overflow: hidden;
 }
 
 td {
@@ -948,4 +953,223 @@ table.admin tr:hover {
 .koszyk-pusty h2 {
     color: #6c757d;
     margin-bottom: 20px;
+}
+
+/* Dodaj style dla przycisków aby były spójne */
+.btn-usun,
+.btn-edytuj,
+.btn-kontynuuj,
+.btn-zamow,
+.btn-ilosc,
+input[type="submit"] {
+    border: none;
+    padding: 8px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+/* Modyfikacja formularzy */
+form {
+    background-color: rgba(255, 255, 255, 0.9);
+    padding: 20px;
+    border-radius: 8px;
+    margin: 10px 0;
+}
+
+input[type="text"],
+input[type="number"],
+input[type="date"],
+input[type="file"],
+textarea,
+select {
+    width: 100%;
+    padding: 8px;
+    margin: 5px 0;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+/* Dodaj styl dla nagłówków sekcji */
+h2 {
+    color: #333;
+    border-bottom: 2px solid rgba(0, 0, 0, 0.1);
+    padding-bottom: 10px;
+    margin-bottom: 20px;
+}
+
+/* Dodaj nowe style dla tabeli produktów */
+.produkty-panel table {
+    width: 100%;
+    table-layout: fixed; /* Wymusza stałą szerokość kolumn */
+}
+
+.produkty-panel th,
+.produkty-panel td {
+    padding: 10px;
+    vertical-align: middle;
+    height: 100px; /* Stała wysokość wierszy */
+    word-wrap: break-word; /* Zawijanie długich słów */
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-size: var(--table-font-size-small); /* Domyślny rozmiar tekstu */
+}
+
+/* Ustaw szerokości kolumn */
+.produkty-panel th:nth-child(1), 
+.produkty-panel td:nth-child(1) { /* ID */
+    width: 4%;
+}
+
+.produkty-panel th:nth-child(2), 
+.produkty-panel td:nth-child(2) { /* Tytuł */
+    width: 13%;
+}
+
+.produkty-panel th:nth-child(3), 
+.produkty-panel td:nth-child(3) { /* Data modyfikacji */
+    width: 9%;
+}
+
+.produkty-panel th:nth-child(4), 
+.produkty-panel td:nth-child(4) { /* Data wygaśnięcia */
+    width: 9%;
+}
+
+.produkty-panel th:nth-child(5), 
+.produkty-panel td:nth-child(5) { /* Cena netto */
+    width: 8%;
+}
+
+.produkty-panel th:nth-child(6), 
+.produkty-panel td:nth-child(6) { /* VAT */
+    width: 7%;
+}
+
+.produkty-panel th:nth-child(7), 
+.produkty-panel td:nth-child(7) { /* Ilość sztuk */
+    width: 8%;
+}
+
+.produkty-panel th:nth-child(8), 
+.produkty-panel td:nth-child(8) { /* Status */
+    width: 8%;
+}
+
+.produkty-panel th:nth-child(9), 
+.produkty-panel td:nth-child(9) { /* Kategoria */
+    width: 9%;
+}
+
+.produkty-panel th:nth-child(10), 
+.produkty-panel td:nth-child(10) { /* Gabaryt */
+    width: 7%;
+}
+
+.produkty-panel th:nth-child(11), 
+.produkty-panel td:nth-child(11) { /* Zdjęcie */
+    width: 7%;
+}
+
+.produkty-panel th:nth-child(12), 
+.produkty-panel td:nth-child(12) { /* Akcje */
+    width: 8%;
+    white-space: nowrap;
+    padding: 5px;
+}
+
+/* Style dla zdjęć w tabeli */
+.produkty-panel .produkt-zdjecie img {
+    max-width: 50px;
+    max-height: 50px;
+    object-fit: cover;
+    display: block;
+    margin: 0 auto;
+}
+
+/* Dodaj klasy do zmiany rozmiaru tekstu */
+.produkty-panel.text-small th,
+.produkty-panel.text-small td {
+    font-size: var(--table-font-size-small);
+}
+
+.produkty-panel.text-medium th,
+.produkty-panel.text-medium td {
+    font-size: var(--table-font-size-medium);
+}
+
+.produkty-panel.text-large th,
+.produkty-panel.text-large td {
+    font-size: var(--table-font-size-large);
+}
+
+/* Dodaj przyciski do zmiany rozmiaru tekstu */
+.font-size-controls {
+    margin-bottom: 10px;
+}
+
+.font-size-btn {
+    padding: 5px 10px;
+    margin-right: 5px;
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+    background-color: #f0f0f0;
+}
+
+.font-size-btn:hover {
+    background-color: #e0e0e0;
+}
+
+.font-size-btn.active {
+    background-color: #007bff;
+    color: white;
+}
+
+/* Dostosuj style przycisków w tabeli */
+.produkty-panel .btn-edytuj,
+.produkty-panel .btn-usun {
+    display: inline-block;
+    padding: 3px 6px;
+    margin: 1px;
+    font-size: 11px;
+    min-width: 45px;
+    text-align: center;
+    text-decoration: none;
+    line-height: 1.2;
+}
+
+/* Zmniejsz szerokość kolumny z przyciskami */
+.produkty-panel th:nth-child(12), 
+.produkty-panel td:nth-child(12) { /* Akcje */
+    width: 8%;
+    white-space: nowrap;
+    padding: 5px;
+}
+
+/* Dodaj odstęp między przyciskami */
+.produkty-panel .btn-edytuj {
+    margin-bottom: 2px;
+}
+
+/* Zmniejsz szerokość innych kolumn aby zrobić miejsce */
+.produkty-panel th:nth-child(2), 
+.produkty-panel td:nth-child(2) { /* Tytuł */
+    width: 13%;
+}
+
+.produkty-panel th:nth-child(3), 
+.produkty-panel td:nth-child(3) { /* Data modyfikacji */
+    width: 9%;
+}
+
+.produkty-panel th:nth-child(4), 
+.produkty-panel td:nth-child(4) { /* Data wygaśnięcia */
+    width: 9%;
+}
+
+.produkty-panel th:nth-child(9), 
+.produkty-panel td:nth-child(9) { /* Kategoria */
+    width: 9%;
 }

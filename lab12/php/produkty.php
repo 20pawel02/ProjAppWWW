@@ -354,6 +354,26 @@ class Produkty {
 
         $output .= '</table></div>';
         
+        $output .= '<div class="font-size-controls">
+            <button class="font-size-btn active" onclick="changeTableFontSize(\'small\')">A</button>
+            <button class="font-size-btn" onclick="changeTableFontSize(\'medium\')">A+</button>
+            <button class="font-size-btn" onclick="changeTableFontSize(\'large\')">A++</button>
+        </div>';
+        
+        $output .= '
+        <script>
+        function changeTableFontSize(size) {
+            const panel = document.querySelector(".produkty-panel");
+            panel.classList.remove("text-small", "text-medium", "text-large");
+            panel.classList.add("text-" + size);
+            
+            // Aktualizuj aktywny przycisk
+            const buttons = document.querySelectorAll(".font-size-btn");
+            buttons.forEach(btn => btn.classList.remove("active"));
+            event.target.classList.add("active");
+        }
+        </script>';
+        
         return $output;
     }
 }
