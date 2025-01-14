@@ -8,8 +8,8 @@
        
         <!-- Sprawdzamy, czy jesteśmy na stronie poligon.html -->
         <?php
-            $current_page = $_SERVER['REQUEST_URI'];
-            if (strpos($current_page, 'poligon.html') !== false) {
+            $current_page = basename($_SERVER['PHP_SELF']);
+            if ($current_page == 'poligon.html') {
                 echo '<link rel="stylesheet" href="css/style2.css">';
             } else {
                 echo '<link rel="stylesheet" href="css/style.css">';

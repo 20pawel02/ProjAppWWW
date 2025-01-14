@@ -102,6 +102,30 @@ class Koszyk {
             </div>';
         }
         
+        $output .= '
+        <script>
+        function usunZKoszyka(produktId) {
+            if (confirm("Czy na pewno chcesz usunąć ten produkt z koszyka?")) {
+                fetch("?idp=-12", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/x-www-form-urlencoded",
+                    },
+                    body: "action=usun&produkt_id=" + produktId
+                })
+                .then(response => response.text())
+                .then(() => {
+                    // Odśwież stronę po usunięciu
+                    window.location.reload();
+                })
+                .catch(error => {
+                    console.error("Błąd:", error);
+                    alert("Wystąpił błąd podczas usuwania produktu z koszyka");
+                });
+            }
+        }
+        </script>';
+        
         $output .= '</div>';
         return $output;
     }
@@ -125,7 +149,7 @@ class Koszyk {
             </td>
             <td>' . number_format($suma_produktu, 2) . ' zł</td>
             <td>
-                <button onclick="usunZKoszyka(' . $produkt['id'] . ')" class="btn-usun">Usuń</button>
+                <button onclick="usunZKoszyka(' . $produkt['id'] . ')" class="btn-usun" data-produkt-id="' . $produkt['id'] . '">Usuń</button>
             </td>
         </tr>';
     }
@@ -138,6 +162,61 @@ class Koszyk {
             return $produkt['status_dostepnosci'] == 'dostępny' && $produkt['ilosc_sztuk'] >= $ilosc;
         }
         return false;
+    }
+
+    public function ZarzadzajKoszykiem() {
+        $output = '<div class="koszyk-panel" style="background-color: rgba(255, 255, 255, 0.95); 
+                                                    padding: 20px; 
+                                                    border-radius: 8px; 
+                                                    margin: 20px 0; 
+                                                    box-shadow: 0 2px 4px rgba(0,0,0,0.1);">';
+        
+        $output .= '<h2>Zarządzanie Koszykami</h2>';
+        
+        // Wyświetl listę aktywnych koszyków
+        $output .= $this->PokazAktywneKoszyki();
+        
+        $output .= '</div>';
+        return $output;
+    }
+
+    private function PokazAktywneKoszyki() {
+        $query = "SELECT k.*, u.username 
+                 FROM koszyk k 
+                 LEFT JOIN users u ON k.user_id = u.id 
+                 WHERE k.status = 'aktywny' 
+                 ORDER BY k.data_utworzenia DESC";
+        
+        $result = mysqli_query($this->conn, $query);
+        
+        $output = '<div class="table-responsive">
+            <table border="1">
+                <tr>
+                    <th>ID Koszyka</th>
+                    <th>Użytkownik</th>
+                    <th>Data utworzenia</th>
+                    <th>Suma</th>
+                    <th>Status</th>
+                    <th>Akcje</th>
+                </tr>';
+        
+        while ($row = mysqli_fetch_assoc($result)) {
+            $output .= '<tr>
+                <td>' . $row['id'] . '</td>
+                <td>' . htmlspecialchars($row['username'] ?? 'Gość') . '</td>
+                <td>' . date('Y-m-d H:i', strtotime($row['data_utworzenia'])) . '</td>
+                <td>' . number_format($row['suma'], 2) . ' zł</td>
+                <td>' . $row['status'] . '</td>
+                <td>
+                    <a href="?idp=-10&action=szczegoly&id=' . $row['id'] . '" class="btn-szczegoly">Szczegóły</a>
+                    <a href="?idp=-10&action=usun&id=' . $row['id'] . '" class="btn-usun" 
+                       onclick="return confirm(\'Czy na pewno chcesz usunąć ten koszyk?\')">Usuń</a>
+                </td>
+            </tr>';
+        }
+        
+        $output .= '</table></div>';
+        return $output;
     }
 }
 ?> 

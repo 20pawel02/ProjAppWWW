@@ -81,8 +81,8 @@ class Produkty {
             <label>Gabaryt:</label><br>
             <input type="text" name="gabaryt"><br>
             
-            <label>URL zdjęcia:</label><br>
-            <input type="text" name="zdjecie_url"><br>
+            <label>Zdjęcie produktu:</label><br>
+            <input type="file" name="zdjecie" accept="image/*"><br>
             
             <input type="submit" value="Zapisz produkt">
         </form>';
@@ -111,6 +111,36 @@ class Produkty {
         if (!isset($_POST['tytul'])) return;
 
         try {
+            // Obsługa przesyłanego pliku
+            $zdjecie_url = '';
+            if (isset($_FILES['zdjecie']) && $_FILES['zdjecie']['error'] == 0) {
+                $dozwolone_typy = ['image/jpeg', 'image/png', 'image/gif', 'image/jpg'];
+                $max_rozmiar = 5 * 1024 * 1024; // 5MB
+
+                if (!in_array($_FILES['zdjecie']['type'], $dozwolone_typy)) {
+                    throw new Exception("Niedozwolony typ pliku. Dozwolone są tylko obrazy JPEG, JPG, PNG i GIF.");
+                }
+
+                if ($_FILES['zdjecie']['size'] > $max_rozmiar) {
+                    throw new Exception("Plik jest zbyt duży. Maksymalny rozmiar to 5MB.");
+                }
+
+                $katalog_docelowy = 'images/produkty/';
+                if (!file_exists($katalog_docelowy)) {
+                    mkdir($katalog_docelowy, 0777, true);
+                }
+
+                $nazwa_pliku = time() . '_' . basename($_FILES['zdjecie']['name']);
+                $sciezka_docelowa = $katalog_docelowy . $nazwa_pliku;
+
+                if (move_uploaded_file($_FILES['zdjecie']['tmp_name'], $sciezka_docelowa)) {
+                    $zdjecie_url = $sciezka_docelowa;
+                } else {
+                    throw new Exception("Wystąpił błąd podczas przesyłania pliku.");
+                }
+            }
+
+            // Pozostała część kodu dodawania produktu
             $tytul = mysqli_real_escape_string($this->conn, $_POST['tytul']);
             $opis = mysqli_real_escape_string($this->conn, $_POST['opis']);
             $data_wygasniecia = !empty($_POST['data_wygasniecia']) ? 
@@ -121,31 +151,30 @@ class Produkty {
             $status_dostepnosci = mysqli_real_escape_string($this->conn, $_POST['status_dostepnosci']);
             $kategoria_id = !empty($_POST['kategoria_id']) ? intval($_POST['kategoria_id']) : NULL;
             $gabaryt = mysqli_real_escape_string($this->conn, $_POST['gabaryt']);
-            $zdjecie_url = mysqli_real_escape_string($this->conn, $_POST['zdjecie_url']);
 
-        $query = "INSERT INTO produkty (
-            tytul, 
-            opis, 
-            data_wygasniecia, 
-            cena_netto, 
-            podatek_vat, 
+            $query = "INSERT INTO produkty (
+                tytul, 
+                opis, 
+                data_wygasniecia, 
+                cena_netto, 
+                podatek_vat, 
                 ilosc_sztuk, 
-            status_dostepnosci, 
-            kategoria_id, 
+                status_dostepnosci, 
+                kategoria_id, 
                 gabaryt, 
-            zdjecie_url
-            ) VALUES (
-                '$tytul',
-                '$opis',
-                " . ($data_wygasniecia ? "'$data_wygasniecia'" : "NULL") . ",
-                $cena_netto,
-                $podatek_vat,
-                $ilosc_sztuk,
-                '$status_dostepnosci',
-                " . ($kategoria_id ? "$kategoria_id" : "NULL") . ",
-                '$gabaryt',
-                '$zdjecie_url'
-            )";
+                zdjecie_url
+                ) VALUES (
+                    '$tytul',
+                    '$opis',
+                    " . ($data_wygasniecia ? "'$data_wygasniecia'" : "NULL") . ",
+                    $cena_netto,
+                    $podatek_vat,
+                    $ilosc_sztuk,
+                    '$status_dostepnosci',
+                    " . ($kategoria_id ? "$kategoria_id" : "NULL") . ",
+                    '$gabaryt',
+                    '$zdjecie_url'
+                )";
 
             if (!mysqli_query($this->conn, $query)) {
                 throw new Exception("Błąd podczas dodawania produktu: " . mysqli_error($this->conn));
@@ -154,7 +183,6 @@ class Produkty {
             return true;
 
         } catch (Exception $e) {
-            // Możesz dodać tutaj logowanie błędu
             echo '<div class="error">Wystąpił błąd: ' . $e->getMessage() . '</div>';
             return false;
         }
@@ -214,7 +242,12 @@ class Produkty {
         $produkt = $result->fetch_assoc();
         
         // Formularz edycji
-        $output = '<div class="form-container">
+        $output = '<div class="edit-product-form" style="background-color: rgba(255, 255, 255, 0.8); 
+                                    padding: 20px; 
+                                    border-radius: 5px;
+                                    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+                                    margin: 20px auto;
+                                    max-width: 800px;">
             <h2>Edycja produktu</h2>
             <form method="post">
                 <div class="form-group">
