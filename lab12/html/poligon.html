@@ -7,6 +7,10 @@
     <script src="assets/jquery-3.7.1.min.js"></script>
     <script src="js/kolorujtlo.js" type="text/javascript"></script>
     <script src="js/timedate.js" type="text/javascript"></script>
+    <link rel="stylesheet" href="../css/style2.css">
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+
     <script>
         // Ładowanie index.php przed załadowaniem reszty strony
         $(document).ready(function() {
@@ -17,13 +21,16 @@
                 $('head').append(headContent);
             });
         });
+
     </script>
 </head>
 <body onload="startclock()">
 
-    <!-- Zegar na stronie -->
-    <div id="zegarek"></div>
-    <div id="data"></div>
+    <!-- Zegar i data na stronie -->
+    <div class="time-container">
+        <div id="zegarek">19:33</div>
+        <div id="data">15.01.2025</div>
+    </div>
 
     <!-- Popup na otwarciu strony -->
     <script>
@@ -33,22 +40,24 @@
     </script>
 
     <!-- Zmiana koloru tła -->
-    <form method="post" name="background">
-        <input type="button" value="Żółty" onclick="changeBackground('#FFF000')">
-        <input type="button" value="Czarny" onclick="changeBackground('#000000')">
-        <input type="button" value="Biały" onclick="changeBackground('#ffffff')">
-        <input type="button" value="Zielony" onclick="changeBackground('#00ff00')">
-        <input type="button" value="Niebieski" onclick="changeBackground('#0000ff')">
-        <input type="button" value="Pomarańczowy" onclick="changeBackground('#ff8000')">
-        <input type="button" value="Szary" onclick="changeBackground('#c0c0c0')">
-        <input type="button" value="Czerwony" onclick="changeBackground('#ff0000')">
+    <form method="post" name="background" class="color-buttons">
+        <input type="button" value="Żółty" onclick="changeBackground('#FFF000')" class="color-btn">
+        <input type="button" value="Czarny" onclick="changeBackground('#000000')" class="color-btn">
+        <input type="button" value="Biały" onclick="changeBackground('#ffffff')" class="color-btn">
+        <input type="button" value="Zielony" onclick="changeBackground('#00ff00')" class="color-btn">
+        <input type="button" value="Niebieski" onclick="changeBackground('#0000ff')" class="color-btn">
+        <input type="button" value="Pomarańczowy" onclick="changeBackground('#ff8000')" class="color-btn">
+        <input type="button" value="Szary" onclick="changeBackground('#c0c0c0')" class="color-btn">
+        <input type="button" value="Czerwony" onclick="changeBackground('#ff0000')" class="color-btn">
     </form>
 
     <main>
         <div class="container">
 
             <!-- Powiększa się po kliknięciu -->
-            <div id="animacjaTestowa1" class="test-block">Kliknij</div>
+            <div id="animacjaTestowa1" class="test-block">
+                <span class="block-text">Kliknij mnie</span>
+            </div>
             <script>
                 $("#animacjaTestowa1").on("click", function () {
                     $(this).animate({
@@ -61,7 +70,9 @@
             </script>
 
             <!-- Powiększa się po najechaniu, zmniejsza po odjechaniu -->
-            <div id="animacjaTestowa2" class="test-block">Najedź</div>
+            <div id="animacjaTestowa2" class="test-block">
+                <span class="block-text">Najedź na mnie</span>
+            </div>
             <script>
                 $("#animacjaTestowa2").on({
                     "mouseover": function () {
@@ -78,7 +89,9 @@
             </script>
 
             <!-- Powiększa się z każdym kliknięciem -->
-            <div id="animacjaTestowa3" class="test-block">Kliknij kilka razy</div>
+            <div id="animacjaTestowa3" class="test-block">
+                <span class="block-text">Kliknij kilka razy</span>
+            </div>
             <script>
                 $("#animacjaTestowa3").on("click", function () {
                     if (!$(this).is(":animated")) {
@@ -90,12 +103,43 @@
                     }
                 });
             </script>
-
-            <h2 class="center">Hej! Witaj na stronie poświęconej lotom w kosmos</h2>
-            <p>
-               To jest poligon.
-            </p>
         </div>
     </main>
+
+    <div class="container">
+        <h2 class="center">Hej! Witaj na stronie poświęconej lotom w kosmos</h2>
+        <p>
+           To jest poligon.
+        </p>
+    </div>
+
+
+    <script>
+        // Powiększanie po kliknięciu (toggle)
+        document.querySelectorAll('.click-zoom').forEach(element => {
+            element.addEventListener('click', function() {
+                this.classList.toggle('zoomed');
+            });
+        });
+
+        // Powiększanie po najechaniu
+        document.querySelectorAll('.hover-zoom').forEach(element => {
+            element.addEventListener('mouseenter', function() {
+                this.classList.add('zoomed');
+            });
+            element.addEventListener('mouseleave', function() {
+                this.classList.remove('zoomed');
+            });
+        });
+
+        // Powiększanie z każdym kliknięciem
+        document.querySelectorAll('.increment-zoom').forEach(element => {
+            let scale = 1;
+            element.addEventListener('click', function() {
+                scale += 0.2;
+                this.style.transform = `scale(${scale})`;
+            });
+        });
+    </script>
 </body>
 </html>

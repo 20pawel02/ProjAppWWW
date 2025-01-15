@@ -22,26 +22,27 @@ function stopclock() {
 
 // Funkcja do uruchomienia timera
 function startclock() {
-    stopclock();
-    gettheDate();
-    showtime();
+    // Natychmiastowa aktualizacja przy starcie
+    updateClock();
+    updateDate();
+    // Aktualizacja zegara co sekundę
+    setInterval(updateClock, 1000);
 }
 
-// Funkcja do wyświetlenia czasu i aktualizacji go co 1 sekundę
-function showtime() {
-    var now = new Date; // Utworzenie nowej daty
+function updateClock() {
+    const now = new Date();
+    const hours = String(now.getHours()).padStart(2, '0');
+    const minutes = String(now.getMinutes()).padStart(2, '0');
+    const seconds = String(now.getSeconds()).padStart(2, '0');
+    
+    document.getElementById('zegarek').innerHTML = `${hours}:${minutes}:${seconds}`;
+}
 
-    // Pobranie godziny, minuty i sekundy
-    var hours = now.getHours();
-    var minutes = now.getMinutes();
-    var seconds = now.getSeconds()
-
-    // Pobranie godziny, minuty i sekundy
-    timeValue += ((minutes < 10) ? ":0" : ":") + minutes
-    timeValue += ((seconds < 10) ? ":0" : ":") + seconds
-    timeValue += (hours >= 12) ? " P.M." : "A.M."
-
-    document.getElementById("zegarek").innerHTML = timeValue; // Wyświetlenie czasu w elemencie HTML o identyfikatorze "zegarek"
-    timerID = setTimeout("showtime()", 1000); // Uruchomienie funkcji showtime() po 1 sekundzie
-    timerRunning = true; // Ustawienie flagi timerRunning na true
+function updateDate() {
+    const now = new Date();
+    const day = String(now.getDate()).padStart(2, '0');
+    const month = String(now.getMonth() + 1).padStart(2, '0'); // Miesiące są od 0-11
+    const year = now.getFullYear();
+    
+    document.getElementById('data').innerHTML = `${day}.${month}.${year}`;
 }

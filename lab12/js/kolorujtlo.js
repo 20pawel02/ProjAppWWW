@@ -50,7 +50,6 @@ function clear(from) {
 }
 
 // Funkcja do zmiany koloru tła strony
-function changeBackground(hexNumber) {
-    // Ustawienie koloru tła strony na podany w argumencie hexNumber
-    document.bgColor = hexNumber;
+function changeBackground(color) {
+    document.body.style.backgroundColor = color;
 }

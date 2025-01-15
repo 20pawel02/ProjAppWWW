@@ -8,8 +8,8 @@
        
         <!-- Sprawdzamy, czy jesteśmy na stronie poligon.html -->
         <?php
-            $current_page = basename($_SERVER['PHP_SELF']);
-            if ($current_page == 'poligon.html') {
+            $current_page = ($_GET['idp']);
+            if ($current_page == 7) {
                 echo '<link rel="stylesheet" href="css/style2.css">';
             } else {
                 echo '<link rel="stylesheet" href="css/style.css">';
@@ -215,13 +215,9 @@
             };
             ?>
         </div>
-
-        <div class="container">
-            <?php
-                $nr_indeksu = '169394';
-                $nrGrupy = '4';
-                echo 'Autor: Paweł Wróbel ' . $nr_indeksu . ' grupa ' . $nrGrupy . ' <br /><br />';
-            ?>
-        </div>
+        <footer>
+            <p>&copy; 2024 Loty Kosmiczne. Strona wykonana na zaliczenie przedmiotu Programowanie aplikacji www</p>
+            <p>Autor: Paweł Wróbel 169394</p>
+        </footer>
     </body>
 </html>
