@@ -1,25 +1,20 @@
 <?php
 
-include('cfg.php');
+include('cfg.php'); // Include configuration file
 
 // ----------------------------------------------------------------
-// Funkcja PokazStrone wyświetla treść strony o podanym aliasie.
-// @param string $alias Alias strony do wyświetlenia.
-// @return string Treść strony lub komunikat o braku strony.
+// Function PokazStrone displays the content of the page with the given alias.
+// @param string $alias Alias of the page to display.
+// @return string Page content or message if the page is not found.
 // ----------------------------------------------------------------
-
 function PokazStrone($id) {
-    global $conn;
-    $id_clear = htmlspecialchars($id); // ochrona przed atakami typu XSS
+    global $conn; // Use global connection variable
+    $id_clear = htmlspecialchars($id); // Sanitize the input
 
-    // Specjalna obsługa dla panelu administracyjnego
-    if ($id_clear == -1) {
-        // Sprawdzenie, czy użytkownik jest zalogowany
+    if ($id_clear == -1) { // Check if the alias is for the admin panel
         if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
-            return '[brak_dostepu]';
+            return '[brak_dostepu]'; // Return access denied message
         }
-        
-        // Zwróć treść panelu administracyjnego
         return '
         <div class="admin-panel">
             <h2>Panel Administracyjny</h2>
@@ -28,25 +23,24 @@ function PokazStrone($id) {
                 <li><a href="?action=manage_users">Zarządzaj użytkownikami</a></li>
                 <li><a href="?action=site_settings">Ustawienia strony</a></li>
             </ul>
-        </div>
-        ';
+        </div>'; // Return admin panel HTML
     }
 
+    // SQL query to fetch the page content
     $query = "SELECT * FROM page_list WHERE id = ? LIMIT 1";
-    $stmt = $conn->prepare($query); // przygotowanie zapytania sql
-    $stmt->bind_param("s", $id_clear); // powiazanie parametru z zapytaniem
+    $stmt = $conn->prepare($query); // Prepare the statement
+    $stmt->bind_param("s", $id_clear); // Bind parameters
+    $stmt->execute(); // Execute the statement
+    $result = $stmt->get_result(); // Get the result
+    $row = $result->fetch_assoc(); // Fetch the row
+    $stmt->close(); // Close the statement
 
-    $stmt->execute(); // wykonanie zapytania 
-    $result = $stmt->get_result(); // pobranie wynikow zapytania
-    $row = $result->fetch_assoc(); // pobranie pierwszego wiersza wynikow
-
-    $stmt->close(); // zamkniecie zapytania
-    return empty($row['id']) ? '[nie_znaleziono_strony]' : $row['page_content']; // Zwrócenie treści strony lub komunikatu o braku strony
+    return empty($row['id']) ? '[nie_znaleziono_strony]' : $row['page_content']; // Return page content or not found message
 }
 
 // ----------------------------------------------------------------
-// Sprawdzenie, czy zmienna $_GET['idp'] jest ustawiona
-// Jeśli tak, wywołanie funkcji PokazStrone z wartością z $_GET['idp']
-// Jeśli nie, wyświetlenie komunikatu o braku strony
+// Check if the variable $_GET['idp'] is set
+// If so, call the function PokazStrone with the value from $_GET['idp']
+// If not, display a message indicating that the page is not found
 // ----------------------------------------------------------------
 ?>

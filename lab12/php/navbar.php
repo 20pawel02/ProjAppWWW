@@ -1,41 +1,40 @@
 <?php
-    function loadNav() {
-        global $conn; // Użycie globalnej zmiennej połączenia z bazą danych
+// Function to load the navigation menu
+function loadNav() {
+    global $conn; // Use global connection variable
 
-        // Zapytanie SQL do pobrania wszystkich aktywnych podstron
-        $query = "SELECT id, page_title FROM page_list WHERE status = 1"; // Pobieramy tylko aktywne strony
-        $result = $conn->query($query); 
+    // SQL query to fetch all active subpages
+    $query = "SELECT id, page_title FROM page_list WHERE status = 1"; // Get only active pages
+    $result = $conn->query($query); // Execute query
 
-        // Inicjalizacja zmiennej do przechowywania HTML nawigacji
-        $navHtml = '<nav><ul>';
+    // Initialize variable to store navigation HTML
+    $navHtml = '<nav><ul>';
 
-
-        // Iteracja przez wyniki zapytania
-        while ($row = $result->fetch_assoc()) {
-            // Dodanie linku do nawigacji dla każdej podstrony
-            $navHtml .= '<li><a href="?idp=' . htmlspecialchars($row['id']) . '">' . htmlspecialchars($row['page_title']) . '</a></li>';
-        }
-
-
-        // Dodaj link do sklepu w menu głównym
-        $navHtml .= '<li><a href="?idp=-10" class="sklep-link">Sklep</a></li>';
-        $navHtml .= '<li><a href="?idp=-12" class="koszyk-link">Koszyk';
-        if (!empty($_SESSION['koszyk'])) {
-            $navHtml .= ' (' . array_sum($_SESSION['koszyk']) . ')';
-        }
-        $navHtml .= '</a></li>';
-
-        // Sprawdzenie, czy użytkownik jest zalogowany
-        if (isset($_SESSION['loggedin'])) {
-            // Jeśli użytkownik jest zalogowany, dodaj linki do panelu administracyjnego
-            $navHtml .= '<li><a class="admin" href="?idp=-1">ADMIN</a></li>';
-            $navHtml .= '<li><a class="logout" href="?idp=-2">WYLOGUJ</a></li>';
-        }else{
-            $navHtml .= '<li><a class="haslo" href="?idp=-6">ODZYSKIWANIE HASŁA</a></li>';
-        }
-
-        $navHtml .= '</ul></nav>'; // Zamknięcie listy i nawigacji
-
-        return $navHtml; // Zwrócenie HTML nawigacji        
+    // Iterate through query results
+    while ($row = $result->fetch_assoc()) {
+        // Add a link to the navigation for each subpage
+        $navHtml .= '<li><a href="?idp=' . htmlspecialchars($row['id']) . '">' . htmlspecialchars($row['page_title']) . '</a></li>';
     }
+
+    // Add link to the shop in the main menu
+    $navHtml .= '<li><a href="?idp=-10" class="sklep-link">Sklep</a></li>';
+    $navHtml .= '<li><a href="?idp=-12" class="koszyk-link">Koszyk';
+    if (!empty($_SESSION['koszyk'])) {
+        $navHtml .= ' (' . array_sum($_SESSION['koszyk']) . ')'; // Show item count in cart
+    }
+    $navHtml .= '</a></li>';
+
+    // Check if the user is logged in
+    if (isset($_SESSION['loggedin'])) {
+        // If logged in, add links to the admin panel
+        $navHtml .= '<li><a class="admin" href="?idp=-1">ADMIN</a></li>';
+        $navHtml .= '<li><a class="logout" href="?idp=-2">WYLOGUJ</a></li>';
+    } else {
+        $navHtml .= '<li><a class="haslo" href="?idp=-6">ODZYSKIWANIE HASŁA</a></li>'; // Link for password recovery
+    }
+
+    $navHtml .= '</ul></nav>'; // Close the list and navigation
+
+    return $navHtml; // Return the navigation HTML        
+}
 ?>

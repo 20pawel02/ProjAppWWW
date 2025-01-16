@@ -1,59 +1,64 @@
 <?php
 class Sklep {
-    private $conn;
+    private $conn; // Database connection
     
+    // Constructor to initialize the database connection
     public function __construct($conn) {
-        $this->conn = $conn;
+        $this->conn = $conn; // Assign the connection to the class property
     }
 
+    // Function to display the shop
     public function PokazSklep() {
         $output = '<div class="sklep-container" style="background-color: rgba(255, 255, 255, 0.9); padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
             <h1 style="color: red;">Sklep internetowy</h1>';
         
-        // Dodaj panel kategorii
+        // Add category panel
         $output .= $this->PokazKategorie();
         
-        // Dodaj listę produktów
+        // Add product list
         $output .= '<div class="produkty-grid">';
-        $output .= $this->PokazProdukty();
+        $output .= $this->PokazProdukty(); // Display products
         $output .= '</div>';
         
-        $output .= '</div>';
-        return $output;
+        $output .= '</div>'; // Close shop container
+        return $output; // Return the output
     }
 
+    // Function to display categories
     private function PokazKategorie() {
-        $query = "SELECT * FROM kategorie ORDER BY nazwa";
-        $result = mysqli_query($this->conn, $query);
+        $query = "SELECT * FROM kategorie ORDER BY nazwa"; // SQL query to get categories
+        $result = mysqli_query($this->conn, $query); // Execute query
         
         $output = '<div class="sklep-kategorie">
             <h3>Kategorie</h3>
-            <ul class="kategorie-lista">';
+            <ul class="kategorie-lista">'; // Start category list
             
-        while ($row = mysqli_fetch_assoc($result)) {
+        while ($row = mysqli_fetch_assoc($result)) { // Fetch each category
             $output .= '<li class="kategoria-item">
                 <a href="?idp=-10&kategoria=' . $row['id'] . '">' . htmlspecialchars($row['nazwa']) . '</a>
-            </li>';
+            </li>'; // Create category link
         }
         
-        $output .= '</ul></div>';
-        return $output;
+        $output .= '</ul></div>'; // Close category list
+        return $output; // Return the output
     }
 
+    // Function to display products
     private function PokazProdukty() {
-        $where = "";
-        if (isset($_GET['kategoria'])) {
-            $kategoria_id = intval($_GET['kategoria']);
-            $where = "WHERE p.kategoria_id = $kategoria_id";
+        $where = ""; // Initialize where clause
+        if (isset($_GET['kategoria'])) { // Check if category is selected
+            $kategoria_id = intval($_GET['kategoria']); // Get category ID
+            $where = "WHERE p.kategoria_id = $kategoria_id"; // Add to where clause
         }
 
+        // SQL query to get products
         $query = "SELECT p.*, k.nazwa as kategoria_nazwa 
                  FROM produkty p 
                  LEFT JOIN kategorie k ON p.kategoria_id = k.id 
                  $where
                  ORDER BY p.data_utworzenia DESC";
         
-        $result = mysqli_query($this->conn, $query);
+        $result = mysqli_query($this->conn, $query); // Execute query
         
         $output = '<div style="background-color: rgba(255, 255, 255, 0.95); padding: 20px; border-radius: 8px; margin: 20px 0; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
             <table class="table">
@@ -72,20 +77,21 @@ class Sklep {
                 </thead>
                 <tbody>';
         
-        if (mysqli_num_rows($result) > 0) {
-            while ($row = mysqli_fetch_assoc($result)) {
-                $output .= $this->GenerujWierszProduktu($row);
+        if (mysqli_num_rows($result) > 0) { // Check if there are products
+            while ($row = mysqli_fetch_assoc($result)) { // Fetch each product
+                $output .= $this->GenerujWierszProduktu($row); // Generate product row
             }
         } else {
-            $output .= '<tr><td colspan="9" class="text-center">Brak dostępnych produktów w tej kategorii.</td></tr>';
+            $output .= '<tr><td colspan="9" class="text-center">Brak dostępnych produktów w tej kategorii.</td></tr>'; // No products found
         }
         
-        $output .= '</tbody></table></div>';
-        return $output;
+        $output .= '</tbody></table></div>'; // Close table
+        return $output; // Return the output
     }
 
+    // Function to generate a product row
     private function GenerujWierszProduktu($produkt) {
-        $cena_brutto = $produkt['cena_netto'] * (1 + $produkt['podatek_vat']/100);
+        $cena_brutto = $produkt['cena_netto'] * (1 + $produkt['podatek_vat']/100); // Calculate gross price
         
         return '<tr>
             <td class="produkt-zdjecie">
@@ -110,7 +116,7 @@ class Sklep {
                     </button>
                 </form>
             </td>
-        </tr>';
+        </tr>'; // Return the HTML for the product row
     }
 }
-?> 
+?>

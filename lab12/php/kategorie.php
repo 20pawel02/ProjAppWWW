@@ -1,235 +1,158 @@
 <?php
 class Kategorie {
-    private $conn;
-    
+    private $conn; // Database connection
+
+    // Constructor to initialize the database connection
     public function __construct($conn) {
-        $this->conn = $conn;
-        $this->StworzTabeleKategorii();
+        $this->conn = $conn; // Assign the connection to the class property
+        $this->StworzTabeleKategorii(); // Create categories table if it doesn't exist
     }
 
-    // Metoda tworząca tabelę kategorii jeśli nie istnieje
+    // Function to create the categories table
     private function StworzTabeleKategorii() {
         $query = "CREATE TABLE IF NOT EXISTS kategorie (
             id INT AUTO_INCREMENT PRIMARY KEY,
             matka INT DEFAULT 0,
             nazwa VARCHAR(255) NOT NULL UNIQUE
-        )";
-        
-        $this->conn->query($query);
+        )"; // SQL query to create the table
+        $this->conn->query($query); // Execute the query
     }
 
-    // Metoda dodająca nową kategorię
+    // Function to add a new category
     public function DodajKategorie($nazwa, $matka = 0) {
-        $nazwa = trim($nazwa);
-        if (empty($nazwa)) {
-            return "Nazwa kategorii nie może być pusta.";
-        }
+        $nazwa = trim($nazwa); // Trim whitespace
+        if (empty($nazwa)) return "Nazwa kategorii nie może być pusta."; // Check if name is empty
 
-        $nazwa = $this->conn->real_escape_string($nazwa);
-        $matka = intval($matka);
+        $nazwa = $this->conn->real_escape_string($nazwa); // Escape special characters
+        $matka = intval($matka); // Convert to integer
 
-        // Sprawdzenie, czy matka istnieje (jeśli podana)
+        // Check if parent category exists
         if ($matka > 0) {
             $checkQuery = "SELECT id FROM kategorie WHERE id = $matka";
-            $result = $this->conn->query($checkQuery);
-            if ($result->num_rows === 0) {
-                return "Kategoria nadrzędna nie istnieje.";
+            if ($this->conn->query($checkQuery)->num_rows === 0) {
+                return "Kategoria nadrzędna nie istnieje."; // Parent category does not exist
             }
         }
-        
+
+        // SQL query to insert the new category
         $query = "INSERT INTO kategorie (nazwa, matka) VALUES ('$nazwa', $matka)";
-        if ($this->conn->query($query)) {
-            return true;
-        }
-        return "Błąd podczas dodawania kategorii: " . $this->conn->error;
+        return $this->conn->query($query) ? true : "Błąd podczas dodawania kategorii: " . $this->conn->error; // Return success or error
     }
 
-    // Metoda usuwająca kategorię
+    // Function to delete a category
     public function UsunKategorie($id) {
-        $id = intval($id);
-        
-        // Najpierw sprawdź czy kategoria ma podkategorie
-        $check_query = "SELECT id FROM kategorie WHERE matka = $id";
-        $result = $this->conn->query($check_query);
-        
-        if ($result->num_rows > 0) {
-            // Jeśli ma podkategorie, usuń je najpierw
-            while ($row = $result->fetch_assoc()) {
-                $this->UsunKategorie($row['id']);
-            }
-        }
-        
-        // Teraz usuń samą kategorię
-        $query = "DELETE FROM kategorie WHERE id = $id LIMIT 1";
-        if ($this->conn->query($query)) {
-            return true;
-        }
-        return "Błąd podczas usuwania kategorii: " . $this->conn->error;
+        $id = intval($id); // Convert to integer
+        $this->conn->query("DELETE FROM kategorie WHERE id = $id"); // SQL query to delete category
+        return $this->conn->affected_rows > 0; // Return true if category was deleted
     }
 
-    // Metoda edytująca kategorię
+    // Function to edit a category
     public function EdytujKategorie($id, $nazwa, $matka = null) {
-        $id = intval($id);
-        $nazwa = trim($nazwa);
+        $id = intval($id); // Convert to integer
+        $nazwa = trim($nazwa); // Trim whitespace
+        if (empty($nazwa)) return "Nazwa kategorii nie może być pusta."; // Check if name is empty
 
-        if (empty($nazwa)) {
-            return "Nazwa kategorii nie może być pusta.";
-        }
-
-        $nazwa = $this->conn->real_escape_string($nazwa);
-
-        // Sprawdzenie, czy matka istnieje (jeśli podana)
+        $nazwa = $this->conn->real_escape_string($nazwa); // Escape special characters
         if ($matka !== null) {
-            $matka = intval($matka);
+            $matka = intval($matka); // Convert to integer
             if ($matka > 0) {
                 $checkQuery = "SELECT id FROM kategorie WHERE id = $matka";
-                $result = $this->conn->query($checkQuery);
-                if ($result->num_rows === 0) {
-                    return "Kategoria nadrzędna nie istnieje.";
+                if ($this->conn->query($checkQuery)->num_rows === 0) {
+                    return "Kategoria nadrzędna nie istnieje."; // Parent category does not exist
                 }
             }
         }
 
-        // Unikaj cykli w drzewie kategorii
-        if ($id === $matka) {
-            return "Kategoria nie może być swoją własną nadrzędną.";
-        }
+        if ($id === $matka) return "Kategoria nie może być swoją własną nadrzędną."; // Category cannot be its own parent
 
-        $query = "UPDATE kategorie SET nazwa = '$nazwa'";
-        if ($matka !== null) {
-            $query .= ", matka = $matka";
-        }
-        $query .= " WHERE id = $id LIMIT 1";
-
-        if ($this->conn->query($query)) {
-            return true;
-        }
-        return "Błąd podczas edycji kategorii: " . $this->conn->error;
+        // SQL query to update the category
+        $query = "UPDATE kategorie SET nazwa = '$nazwa'" . ($matka !== null ? ", matka = $matka" : "") . " WHERE id = $id";
+        return $this->conn->query($query) ? true : "Błąd podczas edycji kategorii: " . $this->conn->error; // Return success or error
     }
 
-    // Pomocnicza metoda generująca opcje select
+    // Function to get category options for a dropdown
     private function PobierzOpcjeKategorii($selected = 0) {
-        $query = "SELECT id, nazwa FROM kategorie ORDER BY nazwa LIMIT 100";
-        $result = $this->conn->query($query);
-        $options = '';
-        
-        while ($row = $result->fetch_assoc()) {
-            $options .= '<option value="' . $row['id'] . '"' . 
-                       ($selected == $row['id'] ? ' selected' : '') . '>' . 
-                       htmlspecialchars($row['nazwa']) . '</option>';
+        $query = "SELECT id, nazwa FROM kategorie ORDER BY nazwa"; // SQL query to get categories
+        $result = $this->conn->query($query); // Execute query
+        $options = ''; // Initialize options string
+
+        while ($row = $result->fetch_assoc()) { // Fetch each row
+            $options .= '<option value="' . $row['id'] . '"' . ($selected == $row['id'] ? ' selected' : '') . '>' . htmlspecialchars($row['nazwa']) . '</option>'; // Create option element
         }
-        
-        return $options;
+
+        return $options; // Return options
     }
 
-    // Drzewo kategorii
+    // Function to manage categories
+    public function ZarzadzajKategoriami() {
+        $html = '<div class="kategorie-panel">'; // Start panel
+        if ($_SERVER['REQUEST_METHOD'] == 'POST') { // Check if form is submitted
+            if (isset($_POST['dodaj'])) {
+                $result = $this->DodajKategorie($_POST['nazwa'], $_POST['matka']); // Add category
+                $html .= $result === true ? '<div class="success">Kategoria została dodana.</div>' : '<div class="error">' . $result . '</div>'; // Success or error message
+            } elseif (isset($_POST['usun'])) {
+                $result = $this->UsunKategorie($_POST['id']); // Delete category
+                $html .= $result ? '<div class="success">Kategoria została usunięta.</div>' : '<div class="error">Błąd podczas usuwania kategorii.</div>'; // Success or error message
+            } elseif (isset($_POST['edytuj'])) {
+                $result = $this->EdytujKategorie($_POST['id'], $_POST['nazwa'], $_POST['matka']); // Edit category
+                $html .= $result === true ? '<div class="success">Kategoria została zaktualizowana.</div>' : '<div class="error">' . $result . '</div>'; // Success or error message
+            }
+        }
+
+        // Form to add a new category
+        $html .= '<form method="post">
+            <input type="text" name="nazwa" placeholder="Nazwa kategorii" required>
+            <select name="matka"><option value="0">Kategoria główna</option>' . $this->PobierzOpcjeKategorii() . '</select>
+            <input type="submit" name="dodaj" value="Dodaj">
+        </form>';
+
+        $html .= '<div class="kategorie-lista">' . $this->WyswietlKategorieEdytowalne() . '</div>'; // Display editable categories
+        $html .= '</div>'; // Close panel
+        return $html; // Return the HTML
+    }
+
+    // Function to display editable categories
     private function WyswietlKategorieEdytowalne() {
-        $html = '<div class="kategorie-drzewo">';
-        
-        $query = "SELECT * FROM kategorie WHERE matka = 0 ORDER BY nazwa LIMIT 100";
-        $result = $this->conn->query($query);
-        
-        while ($row = $result->fetch_assoc()) {
-            $html .= $this->WyswietlKategorieEdytowalneRekurencyjnie($row);
+        $html = '<div class="kategorie-drzewo">'; // Start tree structure
+        $query = "SELECT * FROM kategorie WHERE matka = 0 ORDER BY nazwa"; // SQL query to get main categories
+        $result = $this->conn->query($query); // Execute query
+
+        while ($row = $result->fetch_assoc()) { // Fetch each row
+            $html .= $this->WyswietlKategorieEdytowalneRekurencyjnie($row); // Recursive call to display subcategories
         }
-        
-        $html .= '</div>';
-        return $html;
+
+        $html .= '</div>'; // Close tree structure
+        return $html; // Return the HTML
     }
 
+    // Recursive function to display editable categories
     private function WyswietlKategorieEdytowalneRekurencyjnie($kategoria) {
-        $html = '<div class="kategoria">';
-        
+        $html = '<div class="kategoria">'; // Start category div
         $html .= '<div class="kategoria-panel">';
-        $html .= '<span class="kategoria-nazwa">' . htmlspecialchars($kategoria['nazwa']) . '</span>';
-        
-        $html .= '<form method="post" class="edycja-form">
+        $html .= '<span class="kategoria-nazwa">' . htmlspecialchars($kategoria['nazwa']) . '</span>'; // Display category name
+        $html .= '<form method="post">
             <input type="hidden" name="id" value="' . $kategoria['id'] . '">
             <input type="text" name="nazwa" placeholder="Nowa nazwa" value="' . htmlspecialchars($kategoria['nazwa']) . '">
-            <select name="matka">
-                <option value="0">Kategoria główna</option>
-                ' . $this->PobierzOpcjeKategorii($kategoria['matka']) . '
-            </select>
-            <button type="submit" name="edytuj" class="btn-edytuj">Zapisz zmiany</button>
-            <button type="submit" name="usun" class="btn-usun" onclick="return confirm(\'Czy na pewno chcesz usunąć tę kategorię?\')">Usuń</button>
-        </form>';
+            <select name="matka"><option value="0">Kategoria główna</option>' . $this->PobierzOpcjeKategorii($kategoria['matka']) . '</select>
+            <button type="submit" name="edytuj">Zapisz zmiany</button>
+            <button type="submit" name="usun" onclick="return confirm(\'Czy na pewno chcesz usunąć tę kategorię?\')">Usuń</button>
+        </form>'; // Form to edit or delete category
         $html .= '</div>';
-        
-        $query = "SELECT * FROM kategorie WHERE matka = {$kategoria['id']} ORDER BY nazwa LIMIT 50";
+
+        // SQL query to get subcategories
+        $query = "SELECT * FROM kategorie WHERE matka = {$kategoria['id']} ORDER BY nazwa";
         $result = $this->conn->query($query);
-        
-        if ($result->num_rows > 0) {
-            $html .= '<div class="podkategorie">';
-            while ($row = $result->fetch_assoc()) {
-                $html .= $this->WyswietlKategorieEdytowalneRekurencyjnie($row);
-            }
-            $html .= '</div>';
-        }
-        
-        $html .= '</div>';
-        return $html;
-    }
 
-    // Dodaj metodę ZarzadzajKategoriami() do klasy Kategorie
-    public function ZarzadzajKategoriami() {
-        $html = '<div class="kategorie-panel">';
-        
-        // Obsługa formularzy
-        if($_SERVER['REQUEST_METHOD'] == 'POST') {
-            if(isset($_POST['dodaj'])) {
-                $nazwa = $_POST['nazwa'] ?? '';
-                $matka = $_POST['matka'] ?? 0;
-                $result = $this->DodajKategorie($nazwa, $matka);
-                if($result === true) {
-                    $html .= '<div class="success">Kategoria została dodana.</div>';
-                } else {
-                    $html .= '<div class="error">' . $result . '</div>';
-                }
+        if ($result->num_rows > 0) { // If there are subcategories
+            $html .= '<div class="podkategorie">'; // Start subcategories div
+            while ($row = $result->fetch_assoc()) { // Fetch each subcategory
+                $html .= $this->WyswietlKategorieEdytowalneRekurencyjnie($row); // Recursive call
             }
-            elseif(isset($_POST['usun'])) {
-                $id = $_POST['id'] ?? 0;
-                $result = $this->UsunKategorie($id);
-                if($result === true) {
-                    $html .= '<div class="success">Kategoria została usunięta.</div>';
-                } else {
-                    $html .= '<div class="error">' . $result . '</div>';
-                }
-            }
-            elseif(isset($_POST['edytuj'])) {
-                $id = $_POST['id'] ?? 0;
-                $nazwa = $_POST['nazwa'] ?? '';
-                $matka = $_POST['matka'] ?? null;
-                $result = $this->EdytujKategorie($id, $nazwa, $matka);
-                if($result === true) {
-                    $html .= '<div class="success">Kategoria została zaktualizowana.</div>';
-                } else {
-                    $html .= '<div class="error">' . $result . '</div>';
-                }
-            }
+            $html .= '</div>'; // Close subcategories div
         }
 
-        // Formularz dodawania kategorii
-        $html .= '
-        <div class="form-section">
-            <h3>Dodaj nową kategorię</h3>
-            <form method="post">
-                <input type="text" name="nazwa" placeholder="Nazwa kategorii" required>
-                <select name="matka">
-                    <option value="0">Kategoria główna</option>
-                    ' . $this->PobierzOpcjeKategorii() . '
-                </select>
-                <input type="submit" name="dodaj" value="Dodaj">
-            </form>
-        </div>';
-
-        // Lista kategorii z możliwością edycji
-        $html .= '<div class="kategorie-lista">';
-        $html .= '<h3>Lista kategorii</h3>';
-        $html .= $this->WyswietlKategorieEdytowalne();
-        $html .= '</div>';
-
-        $html .= '</div>';
-        return $html;
+        $html .= '</div>'; // Close category div
+        return $html; // Return the HTML
     }
 }
 ?>
