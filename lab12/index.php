@@ -180,7 +180,7 @@
             ?>
         </div>
         <footer>
-            <p>2024 Loty Kosmiczne. Strona wykonana na zaliczenie przedmiotu: programowanie aplikacji www</p>
+            <p>2024 Loty Kosmiczne. Strona wykonana na zaliczenie przedmiotu:  Programowanie aplikacji WWW</p>
             <p>Autor: Paweł Wróbel 169394</p>
         </footer>
     </body>
