@@ -1,64 +1,64 @@
 <?php
 class Sklep {
-    private $conn; // Database connection
+    private $conn; // Zmienna do przechowywania połączenia z bazą danych
     
-    // Constructor to initialize the database connection
+    // Konstruktor do inicjalizacji połączenia z bazą danych
     public function __construct($conn) {
-        $this->conn = $conn; // Assign the connection to the class property
+        $this->conn = $conn; // Przypisanie połączenia do właściwości klasy
     }
 
-    // Function to display the shop
+    // Funkcja do wyświetlania sklepu
     public function PokazSklep() {
         $output = '<div class="sklep-container" style="background-color: rgba(255, 255, 255, 0.9); padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
             <h1 style="color: red;">Sklep internetowy</h1>';
         
-        // Add category panel
+        // Dodaj panel kategorii
         $output .= $this->PokazKategorie();
         
-        // Add product list
+        // Dodaj listę produktów
         $output .= '<div class="produkty-grid">';
-        $output .= $this->PokazProdukty(); // Display products
+        $output .= $this->PokazProdukty(); // Wywołanie funkcji do wyświetlenia produktów
         $output .= '</div>';
         
-        $output .= '</div>'; // Close shop container
-        return $output; // Return the output
+        $output .= '</div>';
+        return $output; // Zwrócenie HTML sklepu
     }
 
-    // Function to display categories
+    // Funkcja do wyświetlania kategorii
     private function PokazKategorie() {
-        $query = "SELECT * FROM kategorie ORDER BY nazwa"; // SQL query to get categories
-        $result = mysqli_query($this->conn, $query); // Execute query
+        $query = "SELECT * FROM kategorie ORDER BY nazwa"; // Zapytanie SQL do pobrania kategorii
+        $result = mysqli_query($this->conn, $query); // Wykonanie zapytania
         
         $output = '<div class="sklep-kategorie">
             <h3>Kategorie</h3>
-            <ul class="kategorie-lista">'; // Start category list
+            <ul class="kategorie-lista">';
             
-        while ($row = mysqli_fetch_assoc($result)) { // Fetch each category
+        while ($row = mysqli_fetch_assoc($result)) { // Iteracja przez wyniki zapytania
             $output .= '<li class="kategoria-item">
                 <a href="?idp=-10&kategoria=' . $row['id'] . '">' . htmlspecialchars($row['nazwa']) . '</a>
-            </li>'; // Create category link
+            </li>'; // Dodanie kategorii do listy
         }
         
-        $output .= '</ul></div>'; // Close category list
-        return $output; // Return the output
+        $output .= '</ul></div>';
+        return $output; // Zwrócenie HTML kategorii
     }
 
-    // Function to display products
+    // Funkcja do wyświetlania produktów
     private function PokazProdukty() {
-        $where = ""; // Initialize where clause
-        if (isset($_GET['kategoria'])) { // Check if category is selected
-            $kategoria_id = intval($_GET['kategoria']); // Get category ID
-            $where = "WHERE p.kategoria_id = $kategoria_id OR p.kategoria_id IN (SELECT id FROM kategorie WHERE matka = $kategoria_id)"; // Add to where clause for subcategories
+        $where = ""; // Zmienna do przechowywania warunków zapytania
+        if (isset($_GET['kategoria'])) { // Sprawdzenie, czy kategoria jest ustawiona
+            $kategoria_id = intval($_GET['kategoria']); // Konwersja ID kategorii na liczbę całkowitą
+            $where = "WHERE p.kategoria_id = $kategoria_id"; // Ustawienie warunku w zapytaniu
         }
 
-        // SQL query to get products
+        // Zapytanie SQL do pobrania produktów
         $query = "SELECT p.*, k.nazwa as kategoria_nazwa 
                  FROM produkty p 
                  LEFT JOIN kategorie k ON p.kategoria_id = k.id 
                  $where
                  ORDER BY p.data_utworzenia DESC";
         
-        $result = mysqli_query($this->conn, $query); // Execute query
+        $result = mysqli_query($this->conn, $query); // Wykonanie zapytania
         
         $output = '<div style="background-color: rgba(255, 255, 255, 0.95); padding: 20px; border-radius: 8px; margin: 20px 0; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
             <table class="table">
@@ -77,21 +77,21 @@ class Sklep {
                 </thead>
                 <tbody>';
         
-        if (mysqli_num_rows($result) > 0) { // Check if there are products
-            while ($row = mysqli_fetch_assoc($result)) { // Fetch each product
-                $output .= $this->GenerujWierszProduktu($row); // Generate product row
+        if (mysqli_num_rows($result) > 0) { // Sprawdzenie, czy są dostępne produkty
+            while ($row = mysqli_fetch_assoc($result)) { // Iteracja przez wyniki zapytania
+                $output .= $this->GenerujWierszProduktu($row); // Generowanie wiersza produktu
             }
         } else {
-            $output .= '<tr><td colspan="9" class="text-center">Brak dostępnych produktów w tej kategorii.</td></tr>'; // No products found
+            $output .= '<tr><td colspan="9" class="text-center">Brak dostępnych produktów w tej kategorii.</td></tr>'; // Komunikat, gdy brak produktów
         }
         
-        $output .= '</tbody></table></div>'; // Close table
-        return $output; // Return the output
+        $output .= '</tbody></table></div>';
+        return $output; // Zwrócenie HTML produktów
     }
 
-    // Function to generate a product row
+    // Funkcja do generowania wiersza produktu
     private function GenerujWierszProduktu($produkt) {
-        $cena_brutto = $produkt['cena_netto'] * (1 + $produkt['podatek_vat']/100); // Calculate gross price
+        $cena_brutto = $produkt['cena_netto'] * (1 + $produkt['podatek_vat']/100); // Obliczenie ceny brutto
         
         return '<tr>
             <td class="produkt-zdjecie">
@@ -107,7 +107,7 @@ class Sklep {
             <td>' . number_format($cena_brutto, 2) . ' zł</td>
             <td>' . $produkt['status_dostepnosci'] . '</td>
             <td>
-                <form method="post" action="?idp=-12" class="form-koszyk">
+                <form method="post" action="?idp=-12" class="form-koszyk" onsubmit="return dodajDoKoszyka(event, ' . $produkt['id'] . ');">
                     <input type="hidden" name="action" value="dodaj">
                     <input type="hidden" name="produkt_id" value="' . $produkt['id'] . '">
                     <button type="submit" class="btn-koszyk" ' . 
@@ -116,7 +116,7 @@ class Sklep {
                     </button>
                 </form>
             </td>
-        </tr>'; // Return the HTML for the product row
+        </tr>'; // Zwrócenie HTML dla wiersza produktu
     }
 }
 ?>

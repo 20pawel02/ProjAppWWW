@@ -165,6 +165,9 @@
                             case 'aktualizuj':
                                 $koszyk->AktualizujIlosc($_POST['produkt_id'], $_POST['ilosc']); // Update product quantity
                                 break;
+                            case 'czysc':
+                                $_SESSION['koszyk'] = []; // Clear the cart
+                                break;
                         }
                     }
                     echo $koszyk->PokazKoszyk(); // Show cart
@@ -177,7 +180,7 @@
             ?>
         </div>
         <footer>
-            <p>2024 Loty Kosmiczne. Strona wykonana na zaliczenie przedmiotu Programowanie aplikacji www</p>
+            <p>2024 Loty Kosmiczne. Strona wykonana na zaliczenie przedmiotu: programowanie aplikacji www</p>
             <p>Autor: Paweł Wróbel 169394</p>
         </footer>
     </body>

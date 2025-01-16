@@ -1,66 +1,66 @@
 <?php
 class Koszyk {
-    private $conn; // Database connection
+    private $conn; // Zmienna do przechowywania połączenia z bazą danych
     
-    // Constructor to initialize the database connection
+    // Konstruktor do inicjalizacji połączenia z bazą danych
     public function __construct($conn) {
-        $this->conn = $conn; // Assign the connection to the class property
+        $this->conn = $conn; // Przypisanie połączenia do właściwości klasy
         if (!isset($_SESSION['koszyk'])) {
-            $_SESSION['koszyk'] = []; // Initialize the shopping cart session variable
+            $_SESSION['koszyk'] = []; // Inicjalizacja zmiennej sesyjnej koszyka
         }
     }
 
-    // Function to add a product to the cart
+    // Funkcja do dodawania produktu do koszyka
     public function DodajDoKoszyka($produkt_id, $ilosc = 1) {
-        $produkt_id = intval($produkt_id); // Convert product ID to integer
-        if (!$this->SprawdzDostepnosc($produkt_id, $ilosc)) return false; // Check availability
+        $produkt_id = intval($produkt_id); // Konwersja ID produktu na liczbę całkowitą
+        if (!$this->SprawdzDostepnosc($produkt_id, $ilosc)) return false; // Sprawdzenie dostępności
 
-        $_SESSION['koszyk'][$produkt_id] = ($_SESSION['koszyk'][$produkt_id] ?? 0) + $ilosc; // Add quantity to cart
-        return true; // Return success
+        $_SESSION['koszyk'][$produkt_id] = ($_SESSION['koszyk'][$produkt_id] ?? 0) + $ilosc; // Dodanie ilości do koszyka
+        return true; // Zwrócenie sukcesu
     }
 
-    // Function to remove a product from the cart
+    // Funkcja do usuwania produktu z koszyka
     public function UsunZKoszyka($produkt_id) {
-        unset($_SESSION['koszyk'][$produkt_id]); // Remove product from cart
-        return true; // Return success
+        unset($_SESSION['koszyk'][$produkt_id]); // Usunięcie produktu z koszyka
+        return true; // Zwrócenie sukcesu
     }
 
-    // Function to update the quantity of a product in the cart
+    // Funkcja do aktualizacji ilości produktu w koszyku
     public function AktualizujIlosc($produkt_id, $ilosc) {
-        if ($ilosc <= 0) return $this->UsunZKoszyka($produkt_id); // Remove if quantity is zero or less
+        if ($ilosc <= 0) return $this->UsunZKoszyka($produkt_id); // Usunięcie, jeśli ilość jest zerowa lub mniejsza
         if ($this->SprawdzDostepnosc($produkt_id, $ilosc)) {
-            $_SESSION['koszyk'][$produkt_id] = $ilosc; // Update quantity in cart
-            return true; // Return success
+            $_SESSION['koszyk'][$produkt_id] = $ilosc; // Aktualizacja ilości w koszyku
+            return true; // Zwrócenie sukcesu
         }
-        return false; // Return failure
+        return false; // Zwrócenie błędu
     }
 
-    // Function to display the cart
+    // Funkcja do wyświetlania koszyka
     public function PokazKoszyk() {
         $output = '<div class="koszyk-container">
             <h2>Twój koszyk</h2>';
         
-        if (empty($_SESSION['koszyk'])) { // Check if cart is empty
+        if (empty($_SESSION['koszyk'])) { // Sprawdzenie, czy koszyk jest pusty
             $output .= '<div class="koszyk-pusty"><h2>Twój koszyk jest pusty</h2><a href="?idp=-10" class="btn-kontynuuj">Przejdź do sklepu</a></div>';
         } else {
             $output .= '<table class="table"><thead><tr><th>Zdjęcie</th><th>Nazwa</th><th>Cena netto</th><th>VAT</th><th>Cena brutto</th><th>Ilość</th><th>Suma</th><th>Akcje</th></tr></thead><tbody>';
-            $suma = 0; // Initialize total sum
+            $suma = 0; // Inicjalizacja całkowitej sumy
 
-            foreach ($_SESSION['koszyk'] as $produkt_id => $ilosc) { // Iterate through cart items
-                $query = "SELECT * FROM produkty WHERE id = $produkt_id"; // SQL query to get product details
+            foreach ($_SESSION['koszyk'] as $produkt_id => $ilosc) { // Iteracja przez przedmioty w koszyku
+                $query = "SELECT * FROM produkty WHERE id = $produkt_id"; // Zapytanie SQL do pobrania szczegółów produktu
                 $result = mysqli_query($this->conn, $query);
                 
-                if ($produkt = mysqli_fetch_assoc($result)) { // Fetch product details
-                    $cena_brutto = $produkt['cena_netto'] * (1 + $produkt['podatek_vat'] / 100); // Calculate gross price
-                    $suma_produktu = $cena_brutto * $ilosc; // Calculate total for this product
-                    $suma += $suma_produktu; // Add to total sum
-                    $output .= $this->GenerujProduktKoszyka($produkt, $ilosc, $cena_brutto, $suma_produktu); // Generate product row
+                if ($produkt = mysqli_fetch_assoc($result)) { // Pobranie szczegółów produktu
+                    $cena_brutto = $produkt['cena_netto'] * (1 + $produkt['podatek_vat'] / 100); // Obliczenie ceny brutto
+                    $suma_produktu = $cena_brutto * $ilosc; // Obliczenie sumy dla tego produktu
+                    $suma += $suma_produktu; // Dodanie do całkowitej sumy
+                    $output .= $this->GenerujProduktKoszyka($produkt, $ilosc, $cena_brutto, $suma_produktu); // Generowanie wiersza produktu
                 }
             }
-            $output .= '</tbody></table><div class="koszyk-podsumowanie"><div class="suma">Suma: ' . number_format($suma, 2) . ' zł</div><div class="koszyk-przyciski"><a href="?idp=-10" class="btn-kontynuuj">Kontynuuj zakupy</a><button class="btn-zamow">Złóż zamówienie</button></div></div>';
+            $output .= '</tbody></table><div class="koszyk-podsumowanie"><div class="suma">Suma: ' . number_format($suma, 2) . ' zł</div><div class="koszyk-przyciski"><a href="?idp=-10" class="btn-kontynuuj">Kontynuuj zakupy</a><button class="btn-zamow" onclick="zlozZamowienie()">Złóż zamówienie</button></div></div>';
         }
 
-        // JavaScript function to remove product from cart
+        // Funkcje JavaScript do zarządzania koszykiem
         $output .= '<script>
             function usunZKoszyka(produktId) {
                 if (confirm("Czy na pewno chcesz usunąć ten produkt z koszyka?")) {
@@ -73,7 +73,7 @@ class Koszyk {
                     })
                     .then(response => response.text())
                     .then(() => {
-                        window.location.reload(); // Refresh the page after removing the product
+                        window.location.reload(); // Odświeżenie strony po usunięciu produktu
                     })
                     .catch(error => {
                         console.error("Błąd:", error);
@@ -92,19 +92,41 @@ class Koszyk {
                 })
                 .then(response => response.text())
                 .then(() => {
-                    window.location.reload(); // Refresh the page after updating the quantity
+                    window.location.reload(); // Odświeżenie strony po aktualizacji ilości
                 })
                 .catch(error => {
                     console.error("Błąd:", error);
                     alert("Wystąpił błąd podczas aktualizacji ilości produktu");
                 });
             }
+
+            function zlozZamowienie() {
+                if (confirm("Czy na pewno chcesz złożyć zamówienie?")) {
+                    // Czyszczenie koszyka
+                    fetch("?idp=-12", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/x-www-form-urlencoded",
+                        },
+                        body: "action=czysc"
+                    })
+                    .then(response => response.text())
+                    .then(() => {
+                        alert("Zamówienie zostało złożone! Dziękujemy za zakupy.");
+                        window.location.reload(); // Odświeżenie strony po złożeniu zamówienia
+                    })
+                    .catch(error => {
+                        console.error("Błąd:", error);
+                        alert("Wystąpił błąd podczas składania zamówienia");
+                    });
+                }
+            }
         </script>';
         
-        return $output; // Return the cart HTML
+        return $output; // Zwrócenie HTML koszyka
     }
 
-    // Function to generate a product row in the cart
+    // Funkcja do generowania wiersza produktu w koszyku
     private function GenerujProduktKoszyka($produkt, $ilosc, $cena_brutto, $suma_produktu) {
         return '<tr>
             <td class="produkt-zdjecie">' . ($produkt['zdjecie_url'] ? '<img src="' . htmlspecialchars($produkt['zdjecie_url']) . '" alt="' . htmlspecialchars($produkt['tytul']) . '">' : '<div class="brak-zdjecia">Brak zdjęcia</div>') . '</td>
@@ -120,18 +142,18 @@ class Koszyk {
             </td>
             <td>' . number_format($suma_produktu, 2) . ' zł</td>
             <td><button onclick="usunZKoszyka(' . $produkt['id'] . ')" class="btn-usun">Usuń</button></td>
-        </tr>'; // Return the HTML for the product row
+        </tr>'; // Zwrócenie HTML dla wiersza produktu w koszyku
     }
 
-    // Function to check product availability
+    // Funkcja do sprawdzania dostępności produktu
     private function SprawdzDostepnosc($produkt_id, $ilosc) {
-        $query = "SELECT ilosc_sztuk, status_dostepnosci FROM produkty WHERE id = " . intval($produkt_id); // SQL query to check availability
+        $query = "SELECT ilosc_sztuk, status_dostepnosci FROM produkty WHERE id = " . intval($produkt_id); // Zapytanie SQL do sprawdzenia dostępności
         $result = mysqli_query($this->conn, $query);
         
-        if ($produkt = mysqli_fetch_assoc($result)) { // Fetch product details
-            return $produkt['status_dostepnosci'] == 'dostępny' && $produkt['ilosc_sztuk'] >= $ilosc; // Check if available
+        if ($produkt = mysqli_fetch_assoc($result)) { // Pobranie szczegółów produktu
+            return $produkt['status_dostepnosci'] == 'dostępny' && $produkt['ilosc_sztuk'] >= $ilosc; // Sprawdzenie, czy produkt jest dostępny
         }
-        return false; // Return false if product not found
+        return false; // Zwrócenie fałszu, jeśli produkt nie został znaleziony
     }
 }
 ?>
