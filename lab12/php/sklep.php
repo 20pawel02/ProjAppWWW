@@ -48,7 +48,7 @@ class Sklep {
         $where = ""; // Initialize where clause
         if (isset($_GET['kategoria'])) { // Check if category is selected
             $kategoria_id = intval($_GET['kategoria']); // Get category ID
-            $where = "WHERE p.kategoria_id = $kategoria_id"; // Add to where clause
+            $where = "WHERE p.kategoria_id = $kategoria_id OR p.kategoria_id IN (SELECT id FROM kategorie WHERE matka = $kategoria_id)"; // Add to where clause for subcategories
         }
 
         // SQL query to get products
