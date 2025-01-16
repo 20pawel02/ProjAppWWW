@@ -45,10 +45,11 @@ class Sklep {
 
     // Funkcja do wyświetlania produktów
     private function PokazProdukty() {
-        $where = ""; // Zmienna do przechowywania warunków zapytania
-        if (isset($_GET['kategoria'])) { // Sprawdzenie, czy kategoria jest ustawiona
-            $kategoria_id = intval($_GET['kategoria']); // Konwersja ID kategorii na liczbę całkowitą
-            $where = "WHERE p.kategoria_id = $kategoria_id"; // Ustawienie warunku w zapytaniu
+        $where = ""; // Initialize where clause
+        if (isset($_GET['kategoria'])) { // Check if category is selected
+            $kategoria_id = intval($_GET['kategoria']); // Get category ID
+            $where = "WHERE p.kategoria_id = $kategoria_id"; // Add to where clause
+            $where = "WHERE p.kategoria_id = $kategoria_id OR p.kategoria_id IN (SELECT id FROM kategorie WHERE matka = $kategoria_id)"; // Add to where clause for subcategories
         }
 
         // Zapytanie SQL do pobrania produktów
