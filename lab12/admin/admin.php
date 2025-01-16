@@ -32,21 +32,6 @@ include 'cfg.php'; // ladowanie pliku konfigyracyjnego
             </div>';
         }
 
-        // Funkcja do sprawdzania logowania
-        // @return int 1 - zalogowany, 0 - niezalogowany
-        function CheckLogin(){
-            // Sprawdź, czy użytkownik jest już zalogowany
-            if (isset($_SESSION['loggedin']) && $_SESSION['loggedin']) {
-                return 1; // Użytkownik jest już zalogowany
-            }
-
-            // Sprawdź, czy formularz przekazał login i hasło
-            if (isset($_POST['login']) && isset($_POST['login_pass'])) {
-                return $this->CheckLoginCred($_POST['login'], $_POST['login_pass']); // Sprawdzenie danych logowania
-            }
-
-            return 0; // Nie ma danych logowania
-        }
 
         // Funkcja do sprawdzania danych logowania
         /*
@@ -65,6 +50,24 @@ include 'cfg.php'; // ladowanie pliku konfigyracyjnego
             }
         }
 
+
+        // Funkcja do sprawdzania logowania
+        // @return int 1 - zalogowany, 0 - niezalogowany
+        function CheckLogin(){
+            // Sprawdź, czy użytkownik jest już zalogowany
+            if (isset($_SESSION['loggedin']) && $_SESSION['loggedin']) {
+                return 1; // Użytkownik jest już zalogowany
+            }
+
+            // Sprawdź, czy formularz przekazał login i hasło
+            if (isset($_POST['login']) && isset($_POST['login_pass'])) {
+                return $this->CheckLoginCred($_POST['login'], $_POST['login_pass']); // Sprawdzenie danych logowania
+            }
+
+            return 0; // Nie ma danych logowania
+        }
+
+        
         // Function to handle admin logout
         function logoutAdmin() {
             // Destroy the session
@@ -226,88 +229,6 @@ include 'cfg.php'; // ladowanie pliku konfigyracyjnego
             }
     }
 
-        // Metoda do dodawania nowej podstrony
-        function DodajNowaPodstrone() {
-            // Sprawdzenie, czy użytkownik jest zalogowany
-            if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
-                return 'Brak dostępu. Zaloguj się.';
-            }
-
-            // Obsługa zapisu nowej podstrony
-            if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_page'])) {
-                // Pobierz dane z formularza
-                $new_title = $_POST['page_title'] ?? '';
-                $new_content = $_POST['page_content'] ?? '';
-                $new_status = isset($_POST['page_status']) ? 1 : 0;
-                $new_alias = $_POST['page_alias'] ?? '';
-
-                // Walidacja danych
-                if (empty($new_title)) {
-                    return 'Błąd: Tytuł strony nie może być pusty.';
-                }
-
-                // Sprawdzenie unikalności aliasu
-                $check_stmt = $this->conn->prepare("SELECT COUNT(*) as count FROM page_list WHERE page_alias = ?");
-                $check_stmt->bind_param("s", $new_alias);
-                $check_stmt->execute();
-                $check_result = $check_stmt->get_result();
-                $check_row = $check_result->fetch_assoc();
-                $check_stmt->close();
-
-                if ($check_row['count'] > 0) {
-                    return 'Błąd: Podany alias strony już istnieje. Wybierz inny.';
-                }
-
-                // Przygotowanie zapytania SQL INSERT
-                $stmt = $this->conn->prepare("INSERT INTO page_list (page_title, page_content, status, page_alias) VALUES (?, ?, ?, ?)");
-                $stmt->bind_param("ssss", $new_title, $new_content, $new_status, $new_alias);
-
-                // Wykonanie zapytania
-                if ($stmt->execute()) {
-                    $new_page_id = $stmt->insert_id;
-                    $stmt->close();
-                    return 'Nowa strona została pomyślnie dodana. ID strony: ' . $new_page_id;
-                } else {
-                    return 'Błąd podczas dodawania strony: ' . $stmt->error;
-                }
-            }
-
-            // Formularz dodawania nowej podstrony
-            $form = '
-            <div class="add-page-form">
-                <h2>Dodaj nową stronę</h2>
-                <form method="post" action="">
-                    <div class="form-group">
-                        <label for="page_title">Tytuł strony:</label>
-                        <input type="text" id="page_title" name="page_title" required placeholder="Wprowadź tytuł strony">
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="page_alias">Alias strony:</label>
-                        <input type="text" id="page_alias" name="page_alias" required placeholder="Wprowadź unikalny alias (np. kontakt, onas)">
-                        <small>Alias będzie używany w adresie URL strony</small>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="page_content">Treść strony:</label>
-                        <textarea id="page_content" name="page_content" rows="10" cols="50" placeholder="Wprowadź treść strony"></textarea>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="page_status">
-                            <input type="checkbox" id="page_status" name="page_status" checked>
-                            Strona aktywna
-                        </label>
-                    </div>
-                    
-                    <div class="form-group">
-                        <input type="submit" name="add_page" value="Dodaj stronę">
-                    </div>
-                </form>
-            </div>';
-
-            return $form;
-        }
 
         // Function to add a new subpage
         function StworzPodstrone() {
