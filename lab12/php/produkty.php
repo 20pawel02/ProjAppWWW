@@ -76,12 +76,13 @@ class Produkty {
     }
 
     // Function to generate category options for a dropdown
-    private function GenerujOpcjeKategorii($kategorie, $parent_id = 0, $indent = '') {
+    private function GenerujOpcjeKategorii($kategorie, $selected_id = null, $parent_id = 0, $indent = '') {
         $output = '<option value="">-- Wybierz kategorię --</option>'; // Default option
         foreach ($kategorie as $kat) { // Iterate through categories
             if ($kat['matka'] == $parent_id) {
-                $output .= '<option value="' . $kat['id'] . '">' . $indent . htmlspecialchars($kat['nazwa']) . '</option>'; // Create option element
-                $output .= $this->GenerujOpcjeKategorii($kategorie, $kat['id'], $indent . '- '); // Recursive call for subcategories
+                $selected = ($selected_id == $kat['id']) ? 'selected' : ''; // Check if this category is selected
+                $output .= '<option value="' . $kat['id'] . '" ' . $selected . '>' . $indent . htmlspecialchars($kat['nazwa']) . '</option>'; // Create option element
+                $output .= $this->GenerujOpcjeKategorii($kategorie, $selected_id, $kat['id'], $indent . '- '); // Recursive call for subcategories
             }
         }
         return $output; // Return options
@@ -226,7 +227,7 @@ class Produkty {
 
     // Function to generate the product edit form
     private function FormularzEdycjiProduktu($produkt) {
-        $kategorie = $this->PobierzKategorie(); // Get categories for dropdown
+        $kategorie = $this->PobierzKategorie(); // Get all categories for dropdown
         
         $output = '<div class="edit-product-form">
             <h2>Edycja produktu</h2>
@@ -250,7 +251,7 @@ class Produkty {
                     <option value="oczekujący" ' . ($produkt['status_dostepnosci'] == 'oczekujący' ? 'selected' : '') . '>Oczekujący</option>
                 </select><br>
                 <label>Kategoria:</label><br>
-                <select name="kategoria_id" required>' . $this->GenerujOpcjeKategorii($this->PobierzKategorie(), $produkt['kategoria_id']) . '</select><br>
+                <select name="kategoria_id" required>' . $this->GenerujOpcjeKategorii($kategorie, $produkt['kategoria_id']) . '</select><br>
                 <input type="submit" value="Zapisz zmiany">
             </form>
         </div>'; // Return the HTML for the edit form
